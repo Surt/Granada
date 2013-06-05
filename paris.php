@@ -58,6 +58,14 @@
         protected $_class_name;
 
         /**
+         * The relationships that should be eagerly loaded.
+         *
+         * @var array
+         */
+        public $includes = array();
+
+
+        /**
          * Set the name of the class which the wrapped
          * methods should return instances of.
          */
@@ -109,26 +117,37 @@
             return $model;
         }
 
+
+    /**
+     * Override Idiorm's find_many method to return
+     * an array of many instances of the current instance's
+     * class.
+     *
+     * Added the array result key = primary key from the model
+     *
+     */
+    public function find_many()
+    {
+        $results = parent::find_many();
+        foreach($results as $key => $result) {
+            $results[$key] = $this->_create_model_instance($result);
+        }
+        return $results ? Eager::hydrate($this, $results) : $results;
+    }
+
         /**
          * Wrap Idiorm's find_one method to return
          * an instance of the class associated with
          * this wrapper instead of the raw ORM class.
          */
         public function find_one($id=null) {
-            return $this->_create_model_instance(parent::find_one($id));
-        }
-
-        /**
-         * Wrap Idiorm's find_many method to return
-         * an array of instances of the class associated
-         * with this wrapper instead of the raw ORM class.
-         */
-        public function find_many() {
-            $results = parent::find_many();
-            foreach($results as $key => $result) {
-                $results[$key] = $this->_create_model_instance($result);
+            $result = $this->_create_model_instance(parent::find_one($id));
+            if($result){
+                $results = array($result->id =>$result);
+                Eager::hydrate($this, $results);
+                $result = $results[$result->id];
             }
-            return $results;
+            return $result;
         }
 
         /**
@@ -139,6 +158,27 @@
         public function create($data=null) {
             return $this->_create_model_instance(parent::create($data));
         }
+
+
+        /**
+         * Set the eagerly loaded models on the queryable model.
+         *
+         * @return Model
+         */
+        public function with()
+        {
+            $this->includes += func_get_args();
+
+            return $this;
+        }
+
+
+        public function reset_relation()
+        {
+            array_shift($this->_where_conditions);
+            return $this;
+        }
+
     }
 
     /**
@@ -168,10 +208,44 @@
         public static $auto_prefix_models = null;
 
         /**
-         * The ORM instance used by this model 
+         * The ORM instance used by this model
          * instance to communicate with the database.
          */
         public $orm;
+
+        /**
+         * The model's ignored attributes.
+         *
+         * Ignored attributes will not be saved to the database, and are
+         * primarily used to hold relationships.
+         *
+         * @var array
+         */
+        public $ignore = array();
+
+        /**
+         * The relationship type the model is currently resolving.
+         *
+         * @var string
+         */
+        public $relating;
+
+        /**
+         * The foreign key of the "relating" relationship.
+         *
+         * @var string
+         */
+        public $relating_key;
+
+        /**
+         * The table name of the model being resolved.
+         *
+         * This is used during many-to-many eager loading.
+         *
+         * @var string
+         */
+        public $relating_table;
+
 
         /**
          * Retrieve the value of a static property on a class. If the
@@ -203,8 +277,8 @@
 
         /**
          * Convert a namespace to the standard PEAR underscore format.
-         * 
-         * Then convert a class name in CapWords to a table name in 
+         *
+         * Then convert a class name in CapWords to a table name in
          * lowercase_with_underscores.
          *
          * Finally strip doubled up underscores
@@ -276,6 +350,7 @@
         protected function _has_one_or_many($associated_class_name, $foreign_key_name=null) {
             $base_table_name = self::_get_table_name(get_class($this));
             $foreign_key_name = self::_build_foreign_key_name($foreign_key_name, $base_table_name);
+            $this->relating_key = $foreign_key_name;
             return self::factory($associated_class_name)->where($foreign_key_name, $this->id());
         }
 
@@ -284,6 +359,7 @@
          * key is on the associated table.
          */
         protected function has_one($associated_class_name, $foreign_key_name=null) {
+            $this->relating = 'has_one';
             return $this->_has_one_or_many($associated_class_name, $foreign_key_name);
         }
 
@@ -292,6 +368,7 @@
          * key is on the associated table.
          */
         protected function has_many($associated_class_name, $foreign_key_name=null) {
+            $this->relating = 'has_many';
             return $this->_has_one_or_many($associated_class_name, $foreign_key_name);
         }
 
@@ -300,9 +377,11 @@
          * the foreign key is on the base table.
          */
         protected function belongs_to($associated_class_name, $foreign_key_name=null) {
+            $this->relating = 'belongs_to';
             $associated_table_name = self::_get_table_name($associated_class_name);
             $foreign_key_name = self::_build_foreign_key_name($foreign_key_name, $associated_table_name);
             $associated_object_id = $this->$foreign_key_name;
+            $this->relating_key = $foreign_key_name;
             return self::factory($associated_class_name)->where_id_is($associated_object_id);
         }
 
@@ -311,6 +390,7 @@
          * README for a full explanation of the parameters.
          */
         protected function has_many_through($associated_class_name, $join_class_name=null, $key_to_base_table=null, $key_to_associated_table=null) {
+            $this->relating = 'has_many_through';
             $base_class_name = get_class($this);
 
             // The class name of the join model, if not supplied, is
@@ -335,6 +415,12 @@
             $key_to_base_table = self::_build_foreign_key_name($key_to_base_table, $base_table_name);
             $key_to_associated_table = self::_build_foreign_key_name($key_to_associated_table, $associated_table_name);
 
+            $this->relating_key = array(
+                $key_to_base_table,
+                $key_to_associated_table
+            );
+            $this->relating_table = $join_table_name;
+
             return self::factory($associated_class_name)
                 ->select("{$associated_table_name}.*")
                 ->join($join_table_name, array("{$associated_table_name}.{$associated_table_id_column}", '=', "{$join_table_name}.{$key_to_associated_table}"))
@@ -352,6 +438,7 @@
          * Magic getter method, allows $model->property access to data.
          */
         public function __get($property) {
+            if(isset($this->ignore[$property])) return $this->ignore[$property];
             return $this->orm->get($property);
         }
 
@@ -359,7 +446,10 @@
          * Magic setter method, allows $model->property = 'value' access to data.
          */
         public function __set($property, $value) {
-            $this->orm->set($property, $value);
+            if(isset($this->ignore[$property]))
+                $this->ignore[$property] = $value;
+            else
+                $this->orm->set($property, $value);
         }
 
         /**
