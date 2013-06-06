@@ -54,7 +54,11 @@ class Eager
 	/**
 	 * Eagerly load a relationship.
 	 *
+<<<<<<< HEAD
 	 * @param  object  $orm
+=======
+	 * @param  object  $eloquent
+>>>>>>> 311b14621aa05d0e29f90abad79dfd6136a90e04
 	 * @param  array   $parents
 	 * @param  string  $include
 	 * @return void
