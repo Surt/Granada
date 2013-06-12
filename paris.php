@@ -92,14 +92,6 @@
         }
 
         /**
-         * Update the data associated with this model instance to the database.
-         */
-        public function update($values = array()) {
-            return $this->set($values)->save();
-        }
-
-
-        /**
          * Factory method, return an instance of this
          * class bound to the supplied table name.
          *
