@@ -92,6 +92,14 @@
         }
 
         /**
+         * Update the data associated with this model instance to the database.
+         */
+        public function update($values = array()) {
+            return $this->set($values)->save();
+        }
+
+
+        /**
          * Factory method, return an instance of this
          * class bound to the supplied table name.
          *
@@ -128,10 +136,12 @@
      */
     public function find_many()
     {
-        $results = parent::find_many();
-        foreach($results as $key => $result) {
-            $results[$key] = $this->_create_model_instance($result);
+        $temp = parent::find_many();
+        $results = array();
+        foreach($temp as $key => $result) {
+           $results[$result->id()] = $this->_create_model_instance($result);
         }
+        $results = ($temp instanceof IdiormResultSet)?new IdiormResultSet($results):$results;
         return $results ? Eager::hydrate($this, $results) : $results;
     }
 
@@ -246,6 +256,13 @@
          */
         public $relating_table;
 
+        public static function __callStatic($method, $parameters)
+        {
+            if(function_exists('get_called_class')) {
+                $model = self::factory(get_called_class());
+                return call_user_func_array(array($model, $method), $parameters);
+            }
+        }
 
         /**
          * Retrieve the value of a static property on a class. If the
@@ -492,6 +509,13 @@
         }
 
         /**
+         * Update the data associated with this model instance to the database.
+         */
+        public function update($values = array()) {
+            return $this->orm->update($values);
+        }
+
+        /**
          * Check whether the model was the result of a call to create() or not
          * @return bool
          */
@@ -596,7 +620,7 @@ class Eager
      * Eagerly load a relationship.
      *
      * @param  object  $orm
-     * @param  object  $eloquent
+     * @param  object  $result set
      * @param  array   $parents
      * @param  string  $include
      * @return void
@@ -608,6 +632,7 @@ class Eager
             $relationship->reset_relation();
 
             if($relationship_with) $relationship->with($relationship_with);
+            $parents = ($parents instanceof IdiormResultSet)?$parents->as_array():$parents;
 
             // Initialize the relationship attribute on the parents. As expected, "many" relationships
             // are initialized to an array and "one" relationships are initialized to null.
