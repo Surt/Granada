@@ -489,7 +489,13 @@
          * @param string|null $value
          */
         public function set($property, $value = null) {
-            $this->orm->set($property, $value);
+            if (!is_array($property)) {
+                $property = array($property => $value);
+            }
+            foreach ($property as $field => $value) {
+                $this->orm->set($property, $value);
+            }
+            return $this;
         }
 
         /**
