@@ -2,6 +2,7 @@
 
 require_once dirname(__FILE__) . '/idiorm.php';
 require_once dirname(__FILE__) . "/../paris.php";
+//require_once dirname(__FILE__) . "/../eager.php";
 
 /**
  *
@@ -117,6 +118,7 @@ class UserFour extends Model {
         return $this->has_many('Post', 'my_custom_fk_column');
     }
 }
+
 class Author extends Model { }
 class AuthorBook extends Model { }
 class Book extends Model {
@@ -133,3 +135,29 @@ class MockPrefix_Simple extends Model { }
 class MockPrefix_TableSpecified extends Model {
     public static $_table = 'simple';
 } 
+
+
+/**
+ * Models for use during testing eager load
+ */
+
+class Car extends Model {
+    public function parts() {
+        return $this->has_many('Part');
+    }
+    public function manufactor() {
+        return $this->has_one('Manufactor');
+    }    
+}
+
+class Part extends Model {
+  public function car() {
+    return $this->belongs_to('Car');
+  }
+}
+
+class Manufactor extends Model {
+  public function car() {
+    return $this->belongs_to('Car');
+  }
+}
