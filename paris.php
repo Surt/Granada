@@ -617,7 +617,7 @@ class Eager
                     throw new LogicException("Attempting to eager load [$relationship], but the relationship is not defined.");
                 }
 
-                static::eagerly($model, $results, $relationship, $relationship_args, $relationship_with);
+                self::eagerly($model, $results, $relationship, $relationship_args, $relationship_with);
             }
         }
         return $results;
@@ -651,11 +651,11 @@ class Eager
 
             if (in_array($relating = $model->relating, array('has_one', 'has_many', 'belongs_to')))
             {
-                return static::$relating($relationship, $parents, $model->relating_key, $include);
+                return self::$relating($relationship, $parents, $model->relating_key, $include);
             }
             else
             {
-                static::has_and_belongs_to_many($relationship, $parents, $model->relating_key, $model->relating_table, $include);
+                self::has_and_belongs_to_many($relationship, $parents, $model->relating_key, $model->relating_table, $include);
             }
         }
     }
