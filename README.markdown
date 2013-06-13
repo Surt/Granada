@@ -1,6 +1,9 @@
 Paris
 =====
 
+This version:
+
+[![Build Status](https://travis-ci.org/Surt/Paris?branch=master)](https://travis-ci.org/Surt/Paris)
 
 Added eager loading
 --------------------
