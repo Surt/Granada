@@ -614,7 +614,7 @@ class Eager
                 $model = $orm->create();
                 if ( ! method_exists($model, $relationship))
                 {
-                    throw new \LogicException("Attempting to eager load [$relationship], but the relationship is not defined.");
+                    throw new LogicException("Attempting to eager load [$relationship], but the relationship is not defined.");
                 }
 
                 static::eagerly($model, $results, $relationship, $relationship_args, $relationship_with);
