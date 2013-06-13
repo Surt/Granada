@@ -191,6 +191,9 @@
                 array_unshift($parameters, $this);
                 return call_user_func_array(array($this->_class_name,'filter_'.$method), $parameters);
             }
+            else {
+                throw new Exception(" static method 'filter_$method' is not defined");
+            }
         }
         
 
