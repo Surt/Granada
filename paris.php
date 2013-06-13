@@ -180,6 +180,19 @@
             array_shift($this->_where_conditions);
             return $this;
         }
+        
+        /*
+        *
+        * Check if a filter_method is defined to return the result of calling it 
+        *
+        */
+        public function __call($method, $parameters){
+            if(method_exists($this->_class_name,'filter_'.$method)){
+                array_unshift($parameters, $this);
+                return call_user_func_array(array($this->_class_name,'filter_'.$method), $parameters);
+            }
+        }
+        
 
     }
 
