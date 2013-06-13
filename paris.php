@@ -192,7 +192,7 @@
                 return call_user_func_array(array($this->_class_name,'filter_'.$method), $parameters);
             }
             else {
-                throw new Exception(" static method 'filter_$method' is not defined");
+                throw new Exception(" static method 'filter_$method' not defined in ".$this->_class_name);
             }
         }
         
