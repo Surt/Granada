@@ -134,29 +134,3 @@ class MockPrefix_Simple extends Model { }
 class MockPrefix_TableSpecified extends Model {
     public static $_table = 'simple';
 } 
-
-
-/**
- * Models for use during testing eager load
- */
-
-class Car extends Model {
-    public function parts() {
-        return $this->has_many('Part');
-    }
-    public function manufactor() {
-        return $this->has_one('Manufactor');
-    }    
-}
-
-class Part extends Model {
-  public function car() {
-    return $this->belongs_to('Car');
-  }
-}
-
-class Manufactor extends Model {
-  public function car() {
-    return $this->belongs_to('Car');
-  }
-}
