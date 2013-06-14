@@ -180,6 +180,22 @@
             array_shift($this->_where_conditions);
             return $this;
         }
+        
+        /*
+        *
+        * Check if a filter_method is defined to return the result of calling it 
+        *
+        */
+        public function __call($method, $parameters){
+            if(method_exists($this->_class_name,'filter_'.$method)){
+                array_unshift($parameters, $this);
+                return call_user_func_array(array($this->_class_name,'filter_'.$method), $parameters);
+            }
+            else {
+                throw new Exception(" static method 'filter_$method' not defined in ".$this->_class_name);
+            }
+        }
+        
 
     }
 
@@ -598,10 +614,10 @@ class Eager
                 $model = $orm->create();
                 if ( ! method_exists($model, $relationship))
                 {
-                    throw new \LogicException("Attempting to eager load [$relationship], but the relationship is not defined.");
+                    throw new LogicException("Attempting to eager load [$relationship], but the relationship is not defined.");
                 }
 
-                static::eagerly($model, $results, $relationship, $relationship_args, $relationship_with);
+                self::eagerly($model, $results, $relationship, $relationship_args, $relationship_with);
             }
         }
         return $results;
@@ -635,11 +651,11 @@ class Eager
 
             if (in_array($relating = $model->relating, array('has_one', 'has_many', 'belongs_to')))
             {
-                return static::$relating($relationship, $parents, $model->relating_key, $include);
+                return self::$relating($relationship, $parents, $model->relating_key, $include);
             }
             else
             {
-                static::has_and_belongs_to_many($relationship, $parents, $model->relating_key, $model->relating_table, $include);
+                self::has_and_belongs_to_many($relationship, $parents, $model->relating_key, $model->relating_table, $include);
             }
         }
     }
