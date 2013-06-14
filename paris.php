@@ -174,16 +174,23 @@
             return $this;
         }
 
+        /**
+         * Special method to query the table by its primary key
+         */
+        public function where_id_in($ids) {
+            return $this->where_in($this->_get_id_column_name(), $ids);
+        }
+
 
         public function reset_relation()
         {
             array_shift($this->_where_conditions);
             return $this;
         }
-        
+
         /*
         *
-        * Check if a filter_method is defined to return the result of calling it 
+        * Check if a filter_method is defined to return the result of calling it
         *
         */
         public function __call($method, $parameters){
@@ -195,7 +202,7 @@
                 throw new Exception(" static method 'filter_$method' not defined in ".$this->_class_name);
             }
         }
-        
+
 
     }
 
