@@ -765,3 +765,4 @@ class Eager
             $parents[$child->$relating_key[0]]->ignore[$include][$child->id()] = $child;
         }
     }
+}
