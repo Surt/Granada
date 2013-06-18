@@ -647,7 +647,6 @@ class Eager
             $relationship->reset_relation();
 
             if($relationship_with) $relationship->with($relationship_with);
-            $parents = ($parents instanceof IdiormResultSet)?$parents->as_array():$parents;
 
             // Initialize the relationship attribute on the parents. As expected, "many" relationships
             // are initialized to an array and "one" relationships are initialized to null.
@@ -679,7 +678,9 @@ class Eager
      */
     private static function has_one($relationship, &$parents, $relating_key, $include)
     {
-        $related = $relationship->where_in($relating_key, array_keys($parents))->group_by($relating_key)->find_many();
+        $keys = array_keys(($parents instanceof IdiormResultSet)?$parents->as_array():$parents);
+
+        $related = $relationship->where_in($relating_key, $keys)->group_by($relating_key)->find_many();
         foreach ($related as $key => $child)
         {
             $parents[$child->$relating_key]->ignore[$include] = $child;
@@ -699,7 +700,9 @@ class Eager
      */
     private static function has_many($relationship, &$parents, $relating_key, $include)
     {
-        $related = $relationship->where_in($relating_key, array_keys($parents))->find_many();
+        $keys = array_keys(($parents instanceof IdiormResultSet)?$parents->as_array():$parents);
+
+        $related = $relationship->where_in($relating_key, $keys)->find_many();
 
         foreach ($related as $key => $child)
         {
@@ -751,7 +754,8 @@ class Eager
      */
     private static function has_and_belongs_to_many($relationship, &$parents, $relating_key, $relating_table, $include)
     {
-        $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], array_keys($parents))->find_many();
+        $keys = array_keys(($parents instanceof IdiormResultSet)?$parents->as_array():$parents);
+        $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)->find_many();
 
         // The foreign key is added to the select to allow us to easily match the models back to their parents.
         // Otherwise, there would be no apparent connection between the models to allow us to match them.
@@ -761,4 +765,3 @@ class Eager
             $parents[$child->$relating_key[0]]->ignore[$include][$child->id()] = $child;
         }
     }
-}
