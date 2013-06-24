@@ -118,24 +118,24 @@
         }
 
 
-    /**
-     * Override Idiorm's find_many method to return
-     * an array of many instances of the current instance's
-     * class.
-     *
-     * Added the array result key = primary key from the model
-     *
-     */
-    public function find_many()
-    {
-        $temp = parent::find_many();
-        $results = array();
-        foreach($temp as $key => $result) {
-           $results[$result->id()] = $this->_create_model_instance($result);
+        /**
+         * Override Idiorm's find_many method to return
+         * an array of many instances of the current instance's
+         * class.
+         *
+         * Added the array result key = primary key from the model
+         *
+         */
+        public function find_many()
+        {
+            $temp = parent::find_many();
+            $results = array();
+            foreach($temp as $key => $result) {
+               $results[$result->id()] = $this->_create_model_instance($result);
+            }
+            $results = ($temp instanceof IdiormResultSet)?new IdiormResultSet($results):$results;
+            return $results ? Eager::hydrate($this, $results) : $results;
         }
-        $results = ($temp instanceof IdiormResultSet)?new IdiormResultSet($results):$results;
-        return $results ? Eager::hydrate($this, $results) : $results;
-    }
 
         /**
          * Wrap Idiorm's find_one method to return
@@ -145,12 +145,13 @@
         public function find_one($id=null) {
             $result = $this->_create_model_instance(parent::find_one($id));
             if($result){
-                $results = array($result->id =>$result);
+                $results = array($result->{$this->_instance_id_column} => $result);
                 Eager::hydrate($this, $results);
-                $result = $results[$result->id];
+                $result = $results[$result->{$this->_instance_id_column}];
             }
             return $result;
         }
+
 
         /**
          * Wrap Idiorm's create method to return an
