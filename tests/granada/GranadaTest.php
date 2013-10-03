@@ -1,6 +1,6 @@
 <?php
 
-class ParisTest extends PHPUnit_Framework_TestCase {
+class GranadaTest extends PHPUnit_Framework_TestCase {
 
     const ALTERNATE = 'alternate';
 

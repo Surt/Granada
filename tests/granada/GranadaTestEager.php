@@ -5,7 +5,7 @@
  * 
  * @author Peter Schumacher <peter@schumacher.dk>
  */
-class ParisEagerTest extends PHPUnit_Framework_TestCase {
+class GranadaTestEager extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
         
@@ -27,6 +27,7 @@ class ParisEagerTest extends PHPUnit_Framework_TestCase {
 
     public function testFindOneWith1BelongsTo() {
         $car = Model::factory('Car')->with('manufactor')->find_one(1);
+        exit();
         
         $expectedSql   = array();
         $expectedSql[] = "SELECT * FROM `car` WHERE `id` = '1' LIMIT 1";
