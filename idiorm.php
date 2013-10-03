@@ -636,7 +636,7 @@
             $instances = array();
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
-                $key = (isset($row->id())) ? $row->id() : $i;
+                $key = (isset($row->{$this->_instance_id_column})) ? $row->id() : $i;
                 $instances[$key] = $row;
             }
             return $instances;
