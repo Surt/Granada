@@ -1,7 +1,7 @@
 <?php
 
-require_once dirname(__FILE__) . '/idiorm.php';
-require_once dirname(__FILE__) . "/../paris.php";
+require_once dirname(__FILE__) . '/../idiorm.php';
+require_once dirname(__FILE__) . "/../granada.php";
 
 /**
  *
@@ -90,7 +90,7 @@ class Profile extends Model {
     public function user() {
         return $this->belongs_to('User');
     }
-} 
+}
 class User extends Model {
     public function profile() {
         return $this->has_one('Profile');
@@ -130,7 +130,7 @@ class BookTwo extends Model {
         return $this->has_many_through('Author', 'AuthorBook', 'custom_book_id', 'custom_author_id');
     }
 }
-class MockPrefix_Simple extends Model { } 
+class MockPrefix_Simple extends Model { }
 class MockPrefix_TableSpecified extends Model {
     public static $_table = 'simple';
-} 
+}
