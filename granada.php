@@ -198,11 +198,7 @@
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
                 $row = $this->_create_model_instance($row);
-<<<<<<< HEAD
                 $key = (isset($row->{$this->_instance_id_column})) ? $row->id() : $i;
-=======
-                $key = (isset($row->{$this->_instance_id_column}) ? $row->id() : $i;
->>>>>>> b26fd4cbe848db9de667cb058402a82f3396de1e
                 $instances[$key] = $row;
             }
 
