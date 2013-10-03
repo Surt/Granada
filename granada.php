@@ -60,6 +60,8 @@
          */
         protected $_class_name;
 
+        public $relationships = array();
+
         /**
          * Set the name of the class which the wrapped
          * methods should return instances of.
@@ -240,7 +242,7 @@
          */
         public function with()
         {
-            $this->includes  = array_merge($this->includes, func_get_args());
+            $this->relationships  = array_merge($this->relationships, func_get_args());
             return $this;
         }
 
@@ -839,7 +841,7 @@
         {
             if (count($results) > 0)
             {
-                foreach ($orm->includes as $include)
+                foreach ($orm->relationships as $include)
                 {
                     $relationship      = (is_array($include))?key($include):$include;
                     $relationship_args = array();
