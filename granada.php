@@ -649,7 +649,7 @@
          * Added: use Model methods to determine if a relationship exists and populate it on $relationships instead of properties
          */
         public function __set($property, $value) {
-            if(!is_array($property) && method_exists($this,$property])){
+            if(!is_array($property) && method_exists($this,$property)){
                 $this->relationships[$property] = $value;
             }
             else {
