@@ -83,16 +83,25 @@ Triying to access to a not fetched relationship will call and return it
 ```
 
 Multiple additions names for Granada
-----------------------------------
+------------------------------------
 select_raw = select_expr
+
 group_by_raw
+
 order_by_raw
+
 raw_join
+
 insert : To create and save multiple elements from an array
+
 pluck : returns a single column from the result.
+
 find_pairs : Return array of key=>value as result
+
 save : accepts now a boolean to use "ON DUPLICATE KEY UPDATE" (just for Mysql)
+
 delete_many : you could use it to delete from a join clause, defining the table that you want to delete
+
 
 
 Added overload to set and get properties
