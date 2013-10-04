@@ -14,7 +14,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         ORM::set_db(new PDO('sqlite::memory:'));
         
         // Create schemas and populate with data
-        ORM::get_db()->exec(file_get_contents(dirname(__FILE__) . '/eager/eager.sql'));
+        ORM::get_db()->exec(file_get_contents(dirname(__FILE__) . '/eager.sql'));
 
         // Enable logging
         ORM::configure('logging', true);
@@ -25,9 +25,9 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         ORM::set_db(null);
     }
 
+
     public function testFindOneWith1BelongsTo() {
         $car = Model::factory('Car')->with('manufactor')->find_one(1);
-        exit();
         
         $expectedSql   = array();
         $expectedSql[] = "SELECT * FROM `car` WHERE `id` = '1' LIMIT 1";
@@ -86,9 +86,8 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
   
         $this->assertEquals($expectedSql, $actualSql);
     }    
-    
-    
-    public function testFindOneWithHasManyThrough() {
+
+     public function testFindOneWithHasManyThrough() {
         $car = Model::factory('Car')->with('parts')->find_one(1);
         $actualParts = array();
         foreach($car->parts as $p) {
@@ -111,8 +110,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($expectedSql, $actualSql);
         $this->assertEquals($expectedParts, $actualParts);
-        
-    }    
+    }   
     
     public function testFindManyWith2BelongsTo() {
         $cars = Model::factory('Car')->with('owner','manufactor')->find_many();

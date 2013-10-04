@@ -5,7 +5,7 @@
          colors="true">
     <testsuites>
         <testsuite name="Granada Test Suite">
-            <directory suffix="TestEager.php">tests/granada</directory>
+            <directory suffix="TestEager.php">tests/granada/eager</directory>
         </testsuite>
     </testsuites>
 </phpunit>
