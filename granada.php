@@ -247,6 +247,17 @@
         }
 
         /**
+         * Added: Reset relation deletes the relationship "where" condition.
+         *
+         * @return Model
+         */
+        public function reset_relation()
+        {
+            array_shift($this->_where_conditions);
+            return $this;
+        }
+
+        /**
          * Added: Return pairs as result array('keyrecord_value'=>'valuerecord_value',.....)
          *
          */
