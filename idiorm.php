@@ -799,8 +799,12 @@
          * the alias to return the column as.
          */
         public function select($column, $alias=null) {
-            $column = $this->_quote_identifier($column);
-            return $this->_add_result_column($column, $alias);
+            $columns = array_map('trim',explode(',',$column));
+            foreach($columns as $column){
+                $column = $this->_quote_identifier($column);
+                $this->_add_result_column($column, $alias);
+            }
+            return $this;
         }
 
         /**
@@ -1963,8 +1967,13 @@
         public function __call($name, $arguments)
         {
             $method = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name));
+            //return call_user_func_array(array($this, $method), $arguments);
 
-            return call_user_func_array(array($this, $method), $arguments);
+            if (method_exists($this, $method)) {
+                return call_user_func_array(array($this, $method), $arguments);
+            } else {
+                return false;
+            }
         }
 
         /**
