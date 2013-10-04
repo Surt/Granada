@@ -608,11 +608,11 @@
          * no rows were returned.
          * @return array|\IdiormResultSet
          */
-        public function find_many() {
+        public function find_many($associative = true) {
             if(self::$_config[$this->_connection_name]['return_result_sets']) {
-                return $this->find_result_set();
+                return $this->find_result_set($associative);
             }
-            return $this->_find_many();
+            return $this->_find_many($associative);
         }
 
         /**
@@ -622,9 +622,9 @@
          * no rows were returned.
          * @return array
          */
-        protected function _find_many() {
+        protected function _find_many($associative = true) {
             $rows = $this->_run();
-            return $this->_instances_with_id_as_key($rows);
+            return $this->_get_instances($rows, $associative);
         }
 
         /**
@@ -634,12 +634,12 @@
          * @param array $rows
          * @return array
          */
-        protected function _instances_with_id_as_key($rows) {
+        protected function _get_instances($rows, $associative = true) {
             $size = count($rows);
             $instances = array();
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
-                $key = (isset($row->{$this->_instance_id_column})) ? $row->id() : $i;
+                $key = (isset($row->{$this->_instance_id_column}) && $associative) ? $row->id() : $i;
                 $instances[$key] = $row;
             }
             return $instances;
@@ -651,13 +651,13 @@
          * containing instances of the ORM class.
          * @return \IdiormResultSet
          */
-        public function find_result_set() {
+        public function find_result_set($associative = true) {
             $resultSetClass = $this->resultSetClass;
             if(is_a($resultSetClass, 'IdiormResultSet', true)){
-                $resultSetClass = new $resultSetClass($this->_find_many());
+                $resultSetClass = new $resultSetClass($this->_find_many($associative));
             }
             else{
-                $resultSetClass = new IdiormResultSet($this->_find_many());
+                $resultSetClass = new IdiormResultSet($this->_find_many($associative));
             }
             return $resultSetClass;
         }
