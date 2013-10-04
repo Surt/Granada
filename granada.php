@@ -109,7 +109,9 @@
             if ($orm === false) {
                 return false;
             }
-            $model = new $this->_class_name();
+            $class_name = $this->_class_name;
+            $model = new $class_name();
+            $orm->resultSetClass = $class_name::$resultSetClass;
             $model->set_orm($orm);
             return $model;
         }
@@ -339,6 +341,8 @@
         // Default foreign key suffix used by relationship methods
         const DEFAULT_FOREIGN_KEY_SUFFIX = '_id';
 
+        public static $resultSetClass = 'IdiormResultSet';
+
         /**
          * Set a prefix for model names. This can be a namespace or any other
          * abitrary prefix such as the PEAR naming convention.
@@ -480,6 +484,7 @@
             $wrapper = ORMWrapper::for_table($table_name, $connection_name);
             $wrapper->set_class_name($class_name);
             $wrapper->use_id_column(self::_get_id_column_name($class_name));
+            $wrapper->resultSetClass = $class_name::$resultSetClass;
             return $wrapper;
         }
 
@@ -1005,12 +1010,6 @@
             // Otherwise, there would be no apparent connection between the models to allow us to match them.
             foreach ($children as $child)
             {
-                // if(!isset($parents[$child[$relating_key[0]]]->relationships[$include])) {
-                //     $parents[$child[$relating_key[0]]]->relationships[$include] = new IdiormResultSet();
-                // }
-                // create model instance of child ....
-                // $parents[$child[$relating_key[0]]]->relationships[$include]->add(array($child['id']=>$child));
-
                 $parents[$child[$relating_key[0]]]->relationships[$include][$child['id']] = $child;
             }
         }

@@ -82,7 +82,7 @@
             'logging' => false,
             'logger' => null,
             'caching' => false,
-            'return_result_sets' => false,
+            'return_result_sets' => true,
         );
 
         // Map of configuration settings
@@ -174,6 +174,9 @@
         // Name of the column to use as the primary key for
         // this instance only. Overrides the config settings.
         protected $_instance_id_column = null;
+
+        // name of the resulSet Object
+        public $resultSetClass = 'IdiormResultSet';
 
         // ---------------------- //
         // --- STATIC METHODS --- //
@@ -649,7 +652,14 @@
          * @return \IdiormResultSet
          */
         public function find_result_set() {
-            return new IdiormResultSet($this->_find_many());
+            $resultSetClass = $this->resultSetClass;
+            if(is_a($resultSetClass, 'IdiormResultSet', true)){
+                $resultSetClass = new $resultSetClass($this->_find_many());
+            }
+            else{
+                $resultSetClass = new IdiormResultSet($this->_find_many());
+            }
+            return $resultSetClass;
         }
 
         /**
@@ -2156,7 +2166,7 @@
          * @return array
          */
         public function merge(IdiormResultSet $result) {
-            array_push($this->_results, $result->as_array());
+            array_push($this->_results, $this->_results);
             return $this;
         }
 
