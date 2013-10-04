@@ -1037,7 +1037,6 @@
             foreach ($children as $child)
             {
                 if(empty($parents[$child[$relating_key[0]]]->relationships[$include]) && $isResultSets){
-                    var_dump($child);
                     $resultSetClass = $child->get_resultSetClass();
                     $parents[$child[$relating_key[0]]]->relationships[$include] = new $resultSetClass();
                 }
