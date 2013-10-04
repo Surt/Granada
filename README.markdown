@@ -1,8 +1,7 @@
 Granada
 =====
 
-This version:
-No tested yet
+This is an Alpha version. No tested yet, handle with care
 [![Build Status](https://travis-ci.org/Surt/Paris.png?branch=master)](https://travis-ci.org/Surt/Paris)
 
 Granada now becomes a extended version of Idiorm/Paris, adding eager and lazy loading and lot of minor additions and changes.

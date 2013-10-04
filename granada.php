@@ -124,6 +124,13 @@
         }
 
         /**
+         * Special method to query the table by its primary key
+         */
+        public function where_id_in($ids) {
+            return $this->where_in($this->_get_id_column_name(), $ids);
+        }
+
+        /**
          *
          * Create raw_join
          *
@@ -810,23 +817,6 @@
                 return call_user_func_array(array($model, $method), $parameters);
             }
         }
-
-        /**
-         * Magic method to capture calls to undefined class methods.
-         * In this case we are attempting to convert camel case formatted
-         * methods into underscore formatted methods.
-         *
-         * This allows us to call methods using camel case and remain
-         * backwards compatible.
-         *
-         * @param  string   $name
-         * @param  array    $arguments
-         * @return ORMWrapper
-         */
-        public function __call($name, $arguments) {
-            $method = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name));
-            return call_user_func_array(array($this, $method), $arguments);
-        }
     }
 
 
@@ -1015,8 +1005,13 @@
             // Otherwise, there would be no apparent connection between the models to allow us to match them.
             foreach ($children as $child)
             {
-                $parents[$child[$relating_key[0]]]->relationships[$include][$child['id']] = $child;
+                // if(!isset($parents[$child[$relating_key[0]]]->relationships[$include])) {
+                //     $parents[$child[$relating_key[0]]]->relationships[$include] = new IdiormResultSet();
+                // }
+                // create model instance of child ....
+                // $parents[$child[$relating_key[0]]]->relationships[$include]->add(array($child['id']=>$child));
 
+                $parents[$child[$relating_key[0]]]->relationships[$include][$child['id']] = $child;
             }
         }
     }
