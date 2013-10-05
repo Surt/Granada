@@ -1,11 +1,12 @@
 Granada
 =====
 
-This is an Alpha version. No tested yet, handle with care
+This is an Beta version.
+No unit tested yet, handle with care
 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
 
 Granada now becomes a extended version of Idiorm/Paris, adding eager and lazy loading and lot of minor additions and changes.
-Update to Idiorm/Paris v1.4.0
+Updated to Idiorm/Paris v1.4.0
 
 Added eager loading
 --------------------
@@ -131,21 +132,37 @@ SET
     $model->title = 'A title';
 ```
 
+Define resultSet class on Model
+-----------------------------------------
 
-GET
-----
-Overload of get works only on non defined or empty attributes
+Now is possible to define the resultSet class returned for a model instances result. (if `return_result_sets` config variable is set to true)
+Notice that the resultSet class defined must `extends IdiormResultSet` and must be loaded
+
 ```php
     // In the Model
-    protected function get_path(){
-        return 'whatever';
-    }
-
-    ...
-
-    // outside of the model
-    echo $model->path; // returns 'whatever'
+    public static $resultSetClass = 'TreeResultSet';
 ```
+```php
+    // outside of the model
+    var_dump($model->find_many());
+
+    // echoes
+    object(TreeResultSet)[10]
+        protected '_results' => array(...)
+    ....
+```
+
+ResultSets are defined by the model in the result, as you can see above.
+On eager load, the results are consistent.
+For example, if we have a `Content` model, with `$resultSetClass = 'TreeResultSet'` and a `has_many` relationship defined as `media`:
+
+```php
+
+  Content::with('media')->find_many();
+
+```php
+
+will return a TreeResultSet with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
 
 
 
