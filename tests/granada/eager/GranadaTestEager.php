@@ -27,8 +27,9 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
 
 
     public function testFindOneWith1BelongsTo() {
-        $car = Model::factory('Car')->with('manufactor')->find_one(1);
         
+        $car = Model::factory('Car')->with('manufactor')->find_one(1);
+
         $expectedSql   = array();
         $expectedSql[] = "SELECT * FROM `car` WHERE `id` = '1' LIMIT 1";
         $expectedSql[] = "SELECT * FROM `manufactor` WHERE `id` IN ('1')";
@@ -37,9 +38,9 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
 
         // Return last two queries
         $actualSql = array_slice($fullQueryLog, count($fullQueryLog) - 2);
-        //print_r($actual);
 
         $this->assertEquals($expectedSql, $actualSql);
+       
     }
     
     public function testFindOneWith2BelongsTo() {
@@ -63,7 +64,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         
         $expectedSql   = array();
         $expectedSql[] = "SELECT * FROM `owner` WHERE `id` = '1' LIMIT 1";
-        $expectedSql[] = "SELECT * FROM `car` WHERE `owner_id` IN ('1') GROUP BY `owner_id`";
+        $expectedSql[] = "SELECT * FROM `car` WHERE `owner_id` IN ('1')";
         
         $fullQueryLog = ORM::get_query_log();
         
@@ -133,7 +134,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         
         $expectedSql   = array();
         $expectedSql[] = "SELECT * FROM `owner`";
-        $expectedSql[] = "SELECT * FROM `car` WHERE `owner_id` IN ('1', '2', '3', '4') GROUP BY `owner_id`";
+        $expectedSql[] = "SELECT * FROM `car` WHERE `owner_id` IN ('1', '2', '3', '4')";
         
         $fullQueryLog = ORM::get_query_log();
         

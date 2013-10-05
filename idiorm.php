@@ -82,7 +82,7 @@
             'logging' => false,
             'logger' => null,
             'caching' => false,
-            'return_result_sets' => false,
+            'return_result_sets' => true,
         );
 
         // Map of configuration settings
@@ -174,6 +174,9 @@
         // Name of the column to use as the primary key for
         // this instance only. Overrides the config settings.
         protected $_instance_id_column = null;
+
+        // name of the resulSet Object
+        public $resultSetClass = 'IdiormResultSet';
 
         // ---------------------- //
         // --- STATIC METHODS --- //
@@ -605,11 +608,11 @@
          * no rows were returned.
          * @return array|\IdiormResultSet
          */
-        public function find_many() {
+        public function find_many($associative = true) {
             if(self::$_config[$this->_connection_name]['return_result_sets']) {
-                return $this->find_result_set();
+                return $this->find_result_set($associative);
             }
-            return $this->_find_many();
+            return $this->_find_many($associative);
         }
 
         /**
@@ -619,9 +622,9 @@
          * no rows were returned.
          * @return array
          */
-        protected function _find_many() {
+        protected function _find_many($associative = true) {
             $rows = $this->_run();
-            return $this->_instances_with_id_as_key($rows);
+            return $this->_get_instances($rows, $associative);
         }
 
         /**
@@ -631,12 +634,12 @@
          * @param array $rows
          * @return array
          */
-        protected function _instances_with_id_as_key($rows) {
+        protected function _get_instances($rows, $associative = true) {
             $size = count($rows);
             $instances = array();
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
-                $key = (isset($row->{$this->_instance_id_column})) ? $row->id() : $i;
+                $key = (isset($row->{$this->_instance_id_column}) && $associative) ? $row->id() : $i;
                 $instances[$key] = $row;
             }
             return $instances;
@@ -648,8 +651,15 @@
          * containing instances of the ORM class.
          * @return \IdiormResultSet
          */
-        public function find_result_set() {
-            return new IdiormResultSet($this->_find_many());
+        public function find_result_set($associative = true) {
+            $resultSetClass = $this->resultSetClass;
+            if(is_a($resultSetClass, 'IdiormResultSet', true)){
+                $resultSetClass = new $resultSetClass($this->_find_many($associative));
+            }
+            else{
+                $resultSetClass = new IdiormResultSet($this->_find_many($associative));
+            }
+            return $resultSetClass;
         }
 
         /**
@@ -2104,7 +2114,7 @@
      * A result set class for working with collections of model instances
      * @author Simon Holywell <treffynnon@php.net>
      */
-    class IdiormResultSet implements Countable, IteratorAggregate, ArrayAccess, Serializable {
+    class IdiormResultSet implements Countable, IteratorAggregate, ArrayAccess {
         /**
          * The current result set as an array
          * @var array
@@ -2156,7 +2166,7 @@
          * @return array
          */
         public function merge(IdiormResultSet $result) {
-            array_push($this->_results, $result->as_array());
+            array_push($this->_results, $this->_results);
             return $this;
         }
 
@@ -2184,6 +2194,12 @@
             array_push($this->_results, $value);
             return $this;
         }
+
+        public function rewind() { return reset($this->_results); }
+        public function current() { return current($this->_results); }
+        public function key() { return key($this->_results); }
+        public function next() { return next($this->_results); }
+        public function valid() { return isset($this->_results[$this->key()]); }
 
         /**
          * Get the number of records in the result set
@@ -2237,22 +2253,6 @@
             unset($this->_results[$offset]);
         }
 
-        /**
-         * Serializable
-         * @return string
-         */
-        public function serialize() {
-            return serialize($this->_results);
-        }
-
-        /**
-         * Serializable
-         * @param string $serialized
-         * @return array
-         */
-        public function unserialize($serialized) {
-            return unserialize($serialized);
-        }
 
         /**
          * Call a method on all models in a result set. This allows for method
