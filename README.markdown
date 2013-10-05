@@ -165,7 +165,7 @@ For example, if we have a `Content` model, with `$resultSetClass = 'TreeResultSe
 
   Content::with('media')->find_many();
 
-```php
+```
 
 will return a TreeResultSet with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
 
