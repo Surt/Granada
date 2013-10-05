@@ -1,0 +1,11 @@
+<phpunit backupGlobals="true"
+         backupStaticAttributes="false"
+         bootstrap="tests/granada/eager/bootstrap-eager.php"
+         cacheTokens="false"
+         colors="true">
+    <testsuites>
+        <testsuite name="Granada Test Suite">
+            <directory suffix="TestEager.php">tests/granada/eager</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
