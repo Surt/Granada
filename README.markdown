@@ -166,17 +166,10 @@ For example, if we have a `Content` model, with `$resultSetClass = 'TreeResultSe
   Content::with('media')->find_many();
 
 ```
-<<<<<<< HEAD
-
-will return a TreeResultSet with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
-
-
-=======
-
 will return a TreeResultSet with instances of Content each with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
 
 
->>>>>>> c36ec351b43a71258c565637d7337c21d4cb5fa1
+
 Basic Documentation comes from Paris:
 -------------------------------------
 Paris
