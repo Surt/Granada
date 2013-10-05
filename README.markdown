@@ -167,7 +167,7 @@ For example, if we have a `Content` model, with `$resultSetClass = 'TreeResultSe
 
 ```
 
-will return a TreeResultSet with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
+will return a TreeResultSet with instances of Content each with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
 
 
 Basic Documentation comes from Paris:
