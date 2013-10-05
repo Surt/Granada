@@ -82,6 +82,11 @@ Triying to access to a not fetched relationship will call and return it
   }
 ```
 
+Notice that if there is no result for `avatar` on the above example it will throw a `Notice: Trying to get property of non-object...`
+Note:  Maybe worth the effort to create a NULL object for this use case and others.
+
+
+
 Multiple additions names for Granada
 ------------------------------------
 select_raw = select_expr
@@ -163,8 +168,6 @@ For example, if we have a `Content` model, with `$resultSetClass = 'TreeResultSe
 ```php
 
 will return a TreeResultSet with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
-
-
 
 
 Basic Documentation comes from Paris:
