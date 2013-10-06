@@ -8,5 +8,9 @@
             <directory suffix="Test.php">tests/granada</directory>
             <directory suffix="Test53.php" phpVersion="5.3.0" phpVersionOperator=">=">tests/granada</directory>
         </testsuite>
+        <testsuite name="Granada Eager Test Suite">
+            <directory suffix="TestEager.php">tests/granada/eager</directory>
+            <directory suffix="TestEager53.php" phpVersion="5.3.0" phpVersionOperator=">=">tests/granada/eager</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
