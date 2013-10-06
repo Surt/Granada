@@ -1034,8 +1034,8 @@
                     $resultSetClass = $child->get_resultSetClass();
                     $parents[$child[$relating_key[0]]]->relationships[$include] = new $resultSetClass();
                 }
-
                 $parents[$child[$relating_key[0]]]->relationships[$include][$child['id']] = $child;
+                unset($parents[$child[$relating_key[0]]]->relationships[$include][$child['id']][$relating_key[0]]);
             }
         }
     }
