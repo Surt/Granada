@@ -1030,12 +1030,14 @@
             // Otherwise, there would be no apparent connection between the models to allow us to match them.
             foreach ($children as $child)
             {
-                if(empty($parents[$child[$relating_key[0]]]->relationships[$include]) && $return_result_set){
+                $related = $child[$relating_key[0]];
+                unset($child[$relating_key[0]]);
+
+                if(empty($parents[$related]->relationships[$include]) && $return_result_set){
                     $resultSetClass = $child->get_resultSetClass();
-                    $parents[$child[$relating_key[0]]]->relationships[$include] = new $resultSetClass();
+                    $parents[$related]->relationships[$include] = new $resultSetClass();
                 }
-                $parents[$child[$relating_key[0]]]->relationships[$include][$child['id']] = $child;
-                unset($parents[$child[$relating_key[0]]]->relationships[$include][$child['id']][$relating_key[0]]);
+                $parents[$related]->relationships[$include][] = $child;
             }
         }
     }
