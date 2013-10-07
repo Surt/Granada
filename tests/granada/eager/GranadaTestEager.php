@@ -95,6 +95,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
             $actualParts[] = $p->as_array();
         }
 
+
         $expectedSql    = array();
         $expectedSql[]  = "SELECT * FROM `car` WHERE `id` = '1' LIMIT 1";
         $expectedSql[]  = "SELECT `part`.*, `car_part`.`car_id` FROM `part` JOIN `car_part` ON `part`.`id` = `car_part`.`part_id` WHERE `car_part`.`car_id` IN ('1')";
@@ -102,6 +103,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         $expectedParts = array();
         $expectedParts[] = array('id' => 1, 'name' => 'Part1');
         $expectedParts[] = array('id' => 2, 'name' => 'Part2');
+        $expectedParts[] = array('id' => 1, 'name' => 'Part1');
 
         $fullQueryLog = ORM::get_query_log();
         //print_r($fullQueryLog);
@@ -185,6 +187,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
                                     array('id' => '2', 'name' => 'Car2', 'manufactor_id' => '1', 'owner_id' => '2'),
                                     array('id' => '3', 'name' => 'Car3', 'manufactor_id' => '2', 'owner_id' => '3'),
                                     array('id' => '4', 'name' => 'Car4', 'manufactor_id' => '2', 'owner_id' => '4'),
+                                    array('id' => '1', 'name' => 'Car1', 'manufactor_id' => '1', 'owner_id' => '1'),
                                 )
                             );
 

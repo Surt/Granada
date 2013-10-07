@@ -2114,7 +2114,7 @@
      * A result set class for working with collections of model instances
      * @author Simon Holywell <treffynnon@php.net>
      */
-    class IdiormResultSet implements Countable, IteratorAggregate, ArrayAccess {
+    class IdiormResultSet implements ArrayAccess, Countable, IteratorAggregate {
         /**
          * The current result set as an array
          * @var array
@@ -2199,7 +2199,7 @@
         public function current() { return current($this->_results); }
         public function key() { return key($this->_results); }
         public function next() { return next($this->_results); }
-        public function valid() { return isset($this->_results[$this->key()]); }
+        public function valid() { return isset($this->_results[$this->id()]); }
 
         /**
          * Get the number of records in the result set
@@ -2242,7 +2242,14 @@
          * @param mixed $value
          */
         public function offsetSet($offset, $value) {
-            $this->_results[$offset] = $value;
+            if (is_null($offset))
+            {
+                $this->_results[] = $value;
+            }
+            else
+            {
+                $this->_results[$offset] = $value;
+            }
         }
 
         /**
