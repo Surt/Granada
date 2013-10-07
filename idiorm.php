@@ -178,6 +178,10 @@
         // name of the resulSet Object
         public $resultSetClass = 'IdiormResultSet';
 
+        // associative results flag
+        protected $_associative = true;
+
+
         // ---------------------- //
         // --- STATIC METHODS --- //
         // ---------------------- //
@@ -608,11 +612,11 @@
          * no rows were returned.
          * @return array|\IdiormResultSet
          */
-        public function find_many($associative = true) {
+        public function find_many() {
             if(self::$_config[$this->_connection_name]['return_result_sets']) {
-                return $this->find_result_set($associative);
+                return $this->find_result_set();
             }
-            return $this->_find_many($associative);
+            return $this->_find_many();
         }
 
         /**
@@ -624,7 +628,7 @@
          */
         protected function _find_many($associative = true) {
             $rows = $this->_run();
-            return $this->_get_instances($rows, $associative);
+            return $this->_get_instances($rows);
         }
 
         /**
@@ -634,15 +638,20 @@
          * @param array $rows
          * @return array
          */
-        protected function _get_instances($rows, $associative = true) {
+        protected function _get_instances($rows) {
             $size = count($rows);
             $instances = array();
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
-                $key = (isset($row->{$this->_instance_id_column}) && $associative) ? $row->id() : $i;
+                $key = (isset($row->{$this->_instance_id_column}) && $this->_associative) ? $row->id() : $i;
                 $instances[$key] = $row;
             }
             return $instances;
+        }
+
+        public function non_associative() {
+            $this->_associative = false;
+            return $this;
         }
 
         /**
@@ -651,13 +660,13 @@
          * containing instances of the ORM class.
          * @return \IdiormResultSet
          */
-        public function find_result_set($associative = true) {
+        public function find_result_set() {
             $resultSetClass = $this->resultSetClass;
             if(is_a($resultSetClass, 'IdiormResultSet', true)){
-                $resultSetClass = new $resultSetClass($this->_find_many($associative));
+                $resultSetClass = new $resultSetClass($this->_find_many());
             }
             else{
-                $resultSetClass = new IdiormResultSet($this->_find_many($associative));
+                $resultSetClass = new IdiormResultSet($this->_find_many());
             }
             return $resultSetClass;
         }

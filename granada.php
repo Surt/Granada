@@ -199,8 +199,9 @@
          * no rows were returned.
          * @return array|\IdiormResultSet
          */
-        public function find_many($associative = true) {
-            $instances = parent::find_many($associative);
+        public function find_many() {
+            $instances = parent::find_many();
+            $this->_associative = true; // reset associative return to true
             return $instances ? Eager::hydrate($this, $instances, self::$_config[$this->_connection_name]['return_result_sets']) : $instances;
         }
 
@@ -214,13 +215,13 @@
          * @param array $rows
          * @return array
          */
-        protected function _get_instances($rows, $associative = true){
+        protected function _get_instances($rows){
             $size = count($rows);
             $instances = array();
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
                 $row = $this->_create_model_instance($row);
-                $key = (isset($row->{$this->_instance_id_column}) && $associative) ? $row->id() : $i;
+                $key = (isset($row->{$this->_instance_id_column}) && $this->_associative) ? $row->id() : $i;
                 $instances[$key] = $row;
             }
 
@@ -636,8 +637,10 @@
             return self::factory($associated_class_name, $connection_name)
                 ->select("{$associated_table_name}.*")
                 ->join($join_table_name, array("{$associated_table_name}.{$associated_table_id_column}", '=', "{$join_table_name}.{$key_to_associated_table}"))
-                ->where("{$join_table_name}.{$key_to_base_table}", $this->$base_table_id_column); ;
+                ->where("{$join_table_name}.{$key_to_base_table}", $this->$base_table_id_column)
+                ->non_associative();
         }
+
 
         /**
          * Set the wrapped ORM instance associated with this Model instance.
@@ -1027,7 +1030,7 @@
 
             // The foreign key is added to the select to allow us to easily match the models back to their parents.
             // Otherwise, there would be no apparent connection between the models to allow us to match them.
-            $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)->find_many(false);
+            $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)->non_associative()->find_many();
 
             foreach ($children as $child)
             {
