@@ -115,7 +115,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
             'logging' => true,
             'logger' => null,
             'caching' => false,
-            'return_result_sets' => false,
+            'return_result_sets' => true,
             'limit_clause_style' => 'limit',
         );
         $this->assertEquals($expected, ORM::get_config());
