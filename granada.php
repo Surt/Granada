@@ -1024,20 +1024,21 @@
         private static function has_many_through($relationship, &$parents, $relating_key, $relating_table, $include, $return_result_set)
         {
             $keys = array_keys(($parents instanceof IdiormResultSet)?$parents->as_array():$parents);
-            $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)->find_many(false);
 
             // The foreign key is added to the select to allow us to easily match the models back to their parents.
             // Otherwise, there would be no apparent connection between the models to allow us to match them.
+            $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)->find_many(false);
+
             foreach ($children as $child)
             {
                 $related = $child[$relating_key[0]];
-                unset($child[$relating_key[0]]);
+                unset($child[$relating_key[0]]);  // related key does not belongs to the related model
 
                 if(empty($parents[$related]->relationships[$include]) && $return_result_set){
                     $resultSetClass = $child->get_resultSetClass();
                     $parents[$related]->relationships[$include] = new $resultSetClass();
                 }
-                $parents[$related]->relationships[$include][] = $child;
+                $parents[$related]->relationships[$include][] = $child; // no associative array for has_many_through
             }
         }
     }
