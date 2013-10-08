@@ -3,7 +3,7 @@
 namespace Paris\Tests;
 use ORM, Model, MockPDO, PHPUnit_Framework_TestCase;
 
-class ParisTest53 extends PHPUnit_Framework_TestCase {
+class GranadaTest53 extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
         // Enable logging

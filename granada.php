@@ -110,6 +110,7 @@
                 return false;
             }
             $model = new $this->_class_name();
+            $orm->resultSetClass = $model->get_resultSetClass();
             $model->set_orm($orm);
             return $model;
         }
@@ -184,11 +185,26 @@
         public function find_one($id=null) {
             $result = $this->_create_model_instance(parent::find_one($id));
             if($result){
-                $results = array($result->{$this->_instance_id_column} => $result);
-                Eager::hydrate($this, $results);
-                $result = $results[$result->{$this->_instance_id_column}];
+                // set result on an result set for the eager load to work
+                $key = (isset($result->{$this->_instance_id_column}) && $this->_associative_results) ? $result->id() : 0;
+                $results = array($key => $result);
+                Eager::hydrate($this, $results, self::$_config[$this->_connection_name]['return_result_sets']);
+                // return the result as element, not result set
+                $result = $results[$key];
             }
             return $result;
+        }
+
+        /**
+         * Tell the ORM that you are expecting multiple results
+         * from your query, and execute it. Will return an array
+         * of instances of the ORM class, or an empty array if
+         * no rows were returned.
+         * @return array|\IdiormResultSet
+         */
+        public function find_many() {
+            $instances = parent::find_many();
+            return $instances ? Eager::hydrate($this, $instances, self::$_config[$this->_connection_name]['return_result_sets']) : $instances;
         }
 
         /**
@@ -201,17 +217,17 @@
          * @param array $rows
          * @return array
          */
-        protected function _instances_with_id_as_key($rows){
+        protected function _get_instances($rows){
             $size = count($rows);
             $instances = array();
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
                 $row = $this->_create_model_instance($row);
-                $key = (isset($row->{$this->_instance_id_column})) ? $row->id() : $i;
+                $key = (isset($row->{$this->_instance_id_column}) && $this->_associative_results) ? $row->id() : $i;
                 $instances[$key] = $row;
             }
 
-            return $instances ? Eager::hydrate($this, $instances) : $instances;
+            return $instances;
         }
 
         /**
@@ -323,7 +339,7 @@
     }
 
     /**
-     * Model base class. Your model objects should extend
+     * Model base class. Your mod el objects should extend
      * this class. A minimal subclass would look like:
      *
      * class Widget extends Model {
@@ -338,6 +354,8 @@
 
         // Default foreign key suffix used by relationship methods
         const DEFAULT_FOREIGN_KEY_SUFFIX = '_id';
+
+        public static $resultSetClass = 'IdiormResultSet';
 
         /**
          * Set a prefix for model names. This can be a namespace or any other
@@ -480,6 +498,7 @@
             $wrapper = ORMWrapper::for_table($table_name, $connection_name);
             $wrapper->set_class_name($class_name);
             $wrapper->use_id_column(self::_get_id_column_name($class_name));
+            $wrapper->resultSetClass = $class_name::$resultSetClass;
             return $wrapper;
         }
 
@@ -620,8 +639,10 @@
             return self::factory($associated_class_name, $connection_name)
                 ->select("{$associated_table_name}.*")
                 ->join($join_table_name, array("{$associated_table_name}.{$associated_table_id_column}", '=', "{$join_table_name}.{$key_to_associated_table}"))
-                ->where("{$join_table_name}.{$key_to_base_table}", $this->$base_table_id_column); ;
+                ->where("{$join_table_name}.{$key_to_base_table}", $this->$base_table_id_column)
+                ->non_associative();
         }
+
 
         /**
          * Set the wrapped ORM instance associated with this Model instance.
@@ -807,6 +828,10 @@
             $this->orm->hydrate($data)->force_all_dirty();
         }
 
+        public function get_resultSetClass(){
+            return static::$resultSetClass;
+        }
+
         /**
          * Calls static methods directly on the ORMWrapper
          *
@@ -838,7 +863,7 @@
          * Attempts to execute any relationship defined for eager loading
          *
          */
-        public static function hydrate($orm, &$results)
+        public static function hydrate($orm, &$results, $return_result_set = false)
         {
             if (count($results) > 0)
             {
@@ -865,7 +890,7 @@
                         throw new \LogicException("Attempting to eager load [$relationship], but the relationship is not defined.");
                     }
 
-                    self::eagerly($model, $results, $relationship, $relationship_args, $relationship_with);
+                    self::eagerly($model, $results, $relationship, $relationship_args, $relationship_with, $return_result_set);
                 }
             }
             return $results;
@@ -881,7 +906,7 @@
          * @param  string  $include
          * @return void
          */
-        private static function eagerly($model, &$parents, $include, $relationship_args = array(), $relationship_with = false)
+        private static function eagerly($model, &$parents, $include, $relationship_args = array(), $relationship_with = false, $return_result_set)
         {
             if($relationship = call_user_func_array(array($model,$include), $relationship_args)){
 
@@ -891,6 +916,7 @@
 
                 // Initialize the relationship attribute on the parents. As expected, "many" relationships
                 // are initialized to an array and "one" relationships are initialized to null.
+                // added: many relationships are reset to array since we don't know yet the resultSet applicable
                 foreach ($parents as &$parent)
                 {
                     $parent->relationships[$include] = (in_array($model->relating, array('has_many', 'has_many_through'))) ? array() : null;
@@ -898,11 +924,11 @@
 
                 if (in_array($relating = $model->relating, array('has_one', 'has_many', 'belongs_to')))
                 {
-                    return self::$relating($relationship, $parents, $model->relating_key, $include);
+                    return self::$relating($relationship, $parents, $model->relating_key, $include, $return_result_set);
                 }
                 else
                 {
-                    self::has_many_through($relationship, $parents, $model->relating_key, $model->relating_table, $include);
+                    self::has_many_through($relationship, $parents, $model->relating_key, $model->relating_table, $include, $return_result_set);
                 }
             }
         }
@@ -917,10 +943,9 @@
          * @param  string  $include
          * @return void
          */
-        private static function has_one($relationship, &$parents, $relating_key, $include)
+        private static function has_one($relationship, &$parents, $relating_key, $include, $return_result_set)
         {
             $keys = array_keys(($parents instanceof IdiormResultSet)?$parents->as_array():$parents);
-
             $related = $relationship->where_in($relating_key, $keys)->find_many();
             foreach ($related as $key => $child)
             {
@@ -941,7 +966,7 @@
          * @param  string  $include
          * @return void
          */
-        private static function has_many($relationship, &$parents, $relating_key, $include)
+        private static function has_many($relationship, &$parents, $relating_key, $include, $return_result_set)
         {
             $keys = array_keys(($parents instanceof IdiormResultSet)?$parents->as_array():$parents);
 
@@ -949,6 +974,12 @@
 
             foreach ($related as $key => $child)
             {
+                // if resultSet must be returned, create it is the relationships key is not defined
+                if(empty($parents[$child[$relating_key]]->relationships[$include]) && $return_result_set){
+                    $resultSetClass = $child->get_resultSetClass();
+                    $parents[$child->$relating_key]->relationships[$include] = new $resultSetClass();
+                }
+                // add the instance to the relationship array-resultSet
                 $parents[$child->$relating_key]->relationships[$include][$child->id()] = $child;
             }
         }
@@ -964,7 +995,7 @@
          * @param  string  $include
          * @return void
          */
-        private static function belongs_to($relationship, &$parents, $relating_key, $include)
+        private static function belongs_to($relationship, &$parents, $relating_key, $include, $return_result_set)
         {
             foreach ($parents as &$parent)
             {
@@ -972,21 +1003,20 @@
             }
 
             $children = $relationship->where_id_in(array_unique($keys))->find_many();
+            if($children  instanceof IdiormResultSet) $children = $children->as_array();
 
             foreach ($parents as &$parent)
             {
-                if (array_key_exists($parent->$relating_key, $children->get_results()))
+                if (array_key_exists($parent->$relating_key, $children))
                 {
                     $parent->relationships[$include] = $children[$parent->$relating_key];
                 }
             }
-
         }
 
         /**
          * Eagerly load a many-to-many relationship.
          *
-         * TODO: has_many_through eager load returns an array of results instead of a resultSet
          *
          * @param  object  $relationship
          * @param  array   $parents
@@ -996,22 +1026,27 @@
          *
          * @return void
          */
-        private static function has_many_through($relationship, &$parents, $relating_key, $relating_table, $include)
+        private static function has_many_through($relationship, &$parents, $relating_key, $relating_table, $include, $return_result_set)
         {
             $keys = array_keys(($parents instanceof IdiormResultSet)?$parents->as_array():$parents);
-            $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)->find_array();
 
             // The foreign key is added to the select to allow us to easily match the models back to their parents.
             // Otherwise, there would be no apparent connection between the models to allow us to match them.
+            $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)
+                                     ->non_associative()
+                                     ->find_many();
+
             foreach ($children as $child)
             {
-                // if(!isset($parents[$child[$relating_key[0]]]->relationships[$include])) {
-                //     $parents[$child[$relating_key[0]]]->relationships[$include] = new IdiormResultSet();
-                // }
-                // create model instance of child ....
-                // $parents[$child[$relating_key[0]]]->relationships[$include]->add(array($child['id']=>$child));
+                $related = $child[$relating_key[0]];
+                unset($child[$relating_key[0]]);  // foreign key does not belongs to the related model
 
-                $parents[$child[$relating_key[0]]]->relationships[$include][$child['id']] = $child;
+                if(empty($parents[$related]->relationships[$include]) && $return_result_set){
+                    $resultSetClass = $child->get_resultSetClass();
+                    $parents[$related]->relationships[$include] = new $resultSetClass();
+                }
+                // no associative result sets for has_many_through, so we can have multiple rows with the same primary_key
+                $parents[$related]->relationships[$include][] = $child;
             }
         }
     }
