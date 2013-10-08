@@ -115,8 +115,9 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
             'logging' => true,
             'logger' => null,
             'caching' => false,
-            'return_result_sets' => false,
+            'return_result_sets' => true, // true by default in Granada
             'limit_clause_style' => 'limit',
+            'find_many_primary_id_as_key' => true,
         );
         $this->assertEquals($expected, ORM::get_config());
     }

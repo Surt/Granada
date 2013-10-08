@@ -83,6 +83,7 @@
             'logger' => null,
             'caching' => false,
             'return_result_sets' => true,
+            'find_many_primary_id_as_key' => true,
         );
 
         // Map of configuration settings
@@ -179,7 +180,7 @@
         public $resultSetClass = 'IdiormResultSet';
 
         // associative results flag
-        protected $_associative = true;
+        protected $_associative_results = true;
 
 
         // ---------------------- //
@@ -539,6 +540,10 @@
             $this->_data = $data;
 
             $this->_connection_name = $connection_name;
+
+            // Set the flag as config dictates
+            $this->_associative_results  = self::$_config[$this->_connection_name]['find_many_primary_id_as_key'];
+
             self::_setup_db_config($connection_name);
         }
 
@@ -555,6 +560,33 @@
             if (!is_null($data)) {
                 return $this->hydrate($data)->force_all_dirty();
             }
+            return $this;
+        }
+
+        /**
+         * Set the ORM instance to return non associative results sets
+         * @return ORM instance
+         */
+        public function non_associative() {
+            $this->_associative_results = false;
+            return $this;
+        }
+
+        /**
+         * Set the ORM instance to return associative results sets
+         * @return ORM instance
+         */
+        public function associative() {
+            $this->_associative_results = true;
+            return $this;
+        }
+
+        /**
+         * Set the ORM instance to return associative (or not) results sets, as config dictates
+         * @return ORM instance
+         */
+        public function reset_associative() {
+            $this->_associative_results  = self::$_config[$this->_connection_name]['find_many_primary_id_as_key'];
             return $this;
         }
 
@@ -595,8 +627,8 @@
             if (!is_null($id)) {
                 $this->where_id_is($id);
             }
-            $this->limit(1);
-            $rows = $this->_run();
+
+            $rows = $this->limit(1)->_run();
 
             if (empty($rows)) {
                 return false;
@@ -643,15 +675,10 @@
             $instances = array();
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
-                $key = (isset($row->{$this->_instance_id_column}) && $this->_associative) ? $row->id() : $i;
+                $key = (isset($row->{$this->_instance_id_column}) && $this->_associative_results) ? $row->id() : $i;
                 $instances[$key] = $row;
             }
             return $instances;
-        }
-
-        public function non_associative() {
-            $this->_associative = false;
-            return $this;
         }
 
         /**

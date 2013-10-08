@@ -185,9 +185,12 @@
         public function find_one($id=null) {
             $result = $this->_create_model_instance(parent::find_one($id));
             if($result){
-                $results = array($result->{$this->_instance_id_column} => $result);
+                // set result on an result set for the eager load to work
+                $key = (isset($result->{$this->_instance_id_column}) && $this->_associative_results) ? $result->id() : 0;
+                $results = array($key => $result);
                 Eager::hydrate($this, $results, self::$_config[$this->_connection_name]['return_result_sets']);
-                $result = $results[$result->{$this->_instance_id_column}];
+                // return the result as element, not result set
+                $result = $results[$key];
             }
             return $result;
         }
@@ -201,7 +204,6 @@
          */
         public function find_many() {
             $instances = parent::find_many();
-            $this->_associative = true; // reset associative return to true
             return $instances ? Eager::hydrate($this, $instances, self::$_config[$this->_connection_name]['return_result_sets']) : $instances;
         }
 
@@ -221,7 +223,7 @@
             for ($i = 0; $i < $size; $i++) {
                 $row = $this->_create_instance_from_row($rows[$i]);
                 $row = $this->_create_model_instance($row);
-                $key = (isset($row->{$this->_instance_id_column}) && $this->_associative) ? $row->id() : $i;
+                $key = (isset($row->{$this->_instance_id_column}) && $this->_associative_results) ? $row->id() : $i;
                 $instances[$key] = $row;
             }
 
@@ -1030,18 +1032,21 @@
 
             // The foreign key is added to the select to allow us to easily match the models back to their parents.
             // Otherwise, there would be no apparent connection between the models to allow us to match them.
-            $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)->non_associative()->find_many();
+            $children = $relationship->select($relating_table.".".$relating_key[0])->where_in($relating_table.'.'.$relating_key[0], $keys)
+                                     ->non_associative()
+                                     ->find_many();
 
             foreach ($children as $child)
             {
                 $related = $child[$relating_key[0]];
-                unset($child[$relating_key[0]]);  // related key does not belongs to the related model
+                unset($child[$relating_key[0]]);  // foreign key does not belongs to the related model
 
                 if(empty($parents[$related]->relationships[$include]) && $return_result_set){
                     $resultSetClass = $child->get_resultSetClass();
                     $parents[$related]->relationships[$include] = new $resultSetClass();
                 }
-                $parents[$related]->relationships[$include][] = $child; // no associative array for has_many_through
+                // no associative result sets for has_many_through, so we can have multiple rows with the same primary_key
+                $parents[$related]->relationships[$include][] = $child;
             }
         }
     }
