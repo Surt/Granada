@@ -139,6 +139,23 @@ SET
     $model->title = 'A title';
 ```
 
+
+GET
+----
+Overload of get works only on non defined or empty attributes
+TODO:: check it to work on defined attributtes too
+```php
+    // In the Model
+    protected function get_path(){
+        return 'whatever';
+    }
+
+    ...
+
+    // outside of the model
+    echo $model->path; // returns 'whatever'
+```
+
 Define resultSet class on Model
 -----------------------------------------
 
