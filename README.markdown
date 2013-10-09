@@ -305,3 +305,7 @@ Changelog
 #### 1.0.0 - released 2010-12-01
 
 * Initial release
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Surt/granada/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
