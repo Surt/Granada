@@ -4,6 +4,10 @@
  * Testing eager loading
  *
  * @author Peter Schumacher <peter@schumacher.dk>
+ *
+ * Modified by Tom van Oorschot <tomvanoorschot@gmail.com>
+ * Additions:
+ *  - Test will also check for double records on a has_many relation
  */
 class GranadaTestEager extends PHPUnit_Framework_TestCase {
 
