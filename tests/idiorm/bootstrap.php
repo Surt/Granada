@@ -9,10 +9,10 @@ require_once dirname(__FILE__) . '/../../idiorm.php';
  */
 class MockPDOStatement extends PDOStatement {
    private $current_row = 0;
-   
+
    public function __construct() {}
    public function execute($params) {}
-   
+
    /**
     * Return some dummy data
     */
@@ -37,7 +37,7 @@ class MockDifferentPDOStatement extends MockPDOStatement { }
  *
  */
 class MockPDO extends PDO {
-   
+
    /**
     * Return a dummy PDO statement
     */
@@ -76,8 +76,8 @@ class MockMsSqlPDO extends MockPDO {
                 return $this->fake_driver;
             }
         }
-        
+
         return parent::getAttribute($attribute);
     }
-    
+
 }

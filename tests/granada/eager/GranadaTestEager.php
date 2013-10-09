@@ -95,7 +95,6 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
             $actualParts[] = $p->as_array();
         }
 
-
         $expectedSql    = array();
         $expectedSql[]  = "SELECT * FROM `car` WHERE `id` = '1' LIMIT 1";
         $expectedSql[]  = "SELECT `part`.*, `car_part`.`car_id` FROM `part` JOIN `car_part` ON `part`.`id` = `car_part`.`part_id` WHERE `car_part`.`car_id` IN ('1')";
