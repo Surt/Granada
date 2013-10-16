@@ -881,9 +881,9 @@
                     }
 
                     // check if relationship exists on the model
-                    $model = ($results instanceof IdiormResultSet)?$results->first():$orm->create();
+                    $model = ($results instanceof IdiormResultSet)?$results->first():current($results);
 
-                    if ( ! method_exists($model, $relationship))
+                    if (!method_exists($model, $relationship))
                     {
                         throw new \LogicException("Attempting to eager load [$relationship], but the relationship is not defined.");
                     }
