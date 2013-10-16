@@ -255,7 +255,9 @@
          * this wrapper instead of the raw ORM class.
          */
         public function create($data=null) {
-            return $this->_create_model_instance(parent::create(null))->set($data);
+            $model = $this->_create_model_instance(parent::create(null));
+            if($data !== null) $model->set($data);
+            return $model;
         }
 
         /**
@@ -881,7 +883,7 @@
                     }
 
                     // check if relationship exists on the model
-                    $model = ($results instanceof IdiormResultSet)?$results->first():current($results);
+                    $model = $orm->create();
 
                     if (!method_exists($model, $relationship))
                     {
