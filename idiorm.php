@@ -342,7 +342,7 @@
          * @return string
          */
         protected static function _detect_identifier_quote_character($connection_name) {
-            switch(self::$_db[$connection_name]->getAttribute(PDO::ATTR_DRIVER_NAME)) {
+            switch(self::get_db($connection_name)->getAttribute(PDO::ATTR_DRIVER_NAME)) {
                 case 'pgsql':
                 case 'sqlsrv':
                 case 'dblib':
@@ -365,7 +365,7 @@
          * @return string Limit clause style keyword/constant
          */
         protected static function _detect_limit_clause_style($connection_name) {
-            switch(self::$_db[$connection_name]->getAttribute(PDO::ATTR_DRIVER_NAME)) {
+            switch(self::get_db($connection_name)->getAttribute(PDO::ATTR_DRIVER_NAME)) {
                 case 'sqlsrv':
                 case 'dblib':
                 case 'mssql':
@@ -424,7 +424,7 @@
         */
         protected static function _execute($query, $parameters = array(), $connection_name = self::DEFAULT_CONNECTION) {
             self::_log_query($query, $parameters, $connection_name);
-            $statement = self::$_db[$connection_name]->prepare($query);
+            $statement = self::get_db($connection_name)->prepare($query);
 
             self::$_last_statement = $statement;
 
@@ -690,12 +690,12 @@
         public function find_result_set() {
             $resultSetClass = $this->resultSetClass;
             if(is_a($resultSetClass, 'IdiormResultSet', true)){
-                $resultSetClass = new $resultSetClass($this->_find_many());
+                $result = new $resultSetClass($this->_find_many());
             }
             else{
-                $resultSetClass = new IdiormResultSet($this->_find_many());
+                $result = new IdiormResultSet($this->_find_many());
             }
-            return $resultSetClass;
+            return $result;
         }
 
         /**
@@ -769,10 +769,13 @@
 
             $return_value = 0;
             if($result !== false && isset($result->$alias)) {
-                if((int) $result->$alias == (float) $result->$alias) {
+                if (!is_numeric($result->$alias)) {
+                    $return_value = $result->$alias;
+                }
+                elseif((int) $result->$alias == (float) $result->$alias) {
                     $return_value = (int) $result->$alias;
                 } else {
-                    $return_value = (float) $result->$alias;
+                     $return_value = (float) $result->$alias;
                 }
             }
             return $return_value;
