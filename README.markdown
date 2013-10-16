@@ -121,7 +121,7 @@ SET
     protected function set_title($value)
     {
         $this->alias = Str::slug($value);
-        $this->title = $value;
+        return $value;
     }
 ```
 ```php

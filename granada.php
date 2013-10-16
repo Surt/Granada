@@ -255,7 +255,7 @@
          * this wrapper instead of the raw ORM class.
          */
         public function create($data=null) {
-            return $this->_create_model_instance(parent::create($data));
+            return $this->_create_model_instance(parent::create(null))->set($data);
         }
 
         /**
@@ -690,12 +690,7 @@
          * Added: use Model methods to determine if a relationship exists and populate it on $relationships instead of properties
          */
         public function __set($property, $value) {
-            if(!is_array($property) && method_exists($this,$property)){
-                $this->relationships[$property] = $value;
-            }
-            else {
-                $this->set($property, $value);
-            }
+            $this->set($property, $value);
         }
 
         /**
@@ -721,13 +716,16 @@
             if (!is_array($property)) {
                 $property = array($property => $value);
             }
-
             foreach ($property as $field => $val) {
                 if(method_exists($this, $method = 'set_'.$field)){
-                    $this->$method($val);
+                    $property[$field] = $this->$method($val);
+                }
+                elseif(!is_array($property) && method_exists($this, $property)){
+                    $this->relationships[$property] = $value;
                 }
             }
-            return $this->orm->set($property, $value);
+            $result = $this->orm->set($property, $value);
+            return $result;
         }
 
         /**
