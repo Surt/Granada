@@ -4,6 +4,10 @@
  * Testing eager loading
  *
  * @author Peter Schumacher <peter@schumacher.dk>
+ *
+ * Modified by Tom van Oorschot <tomvanoorschot@gmail.com>
+ * Additions:
+ *  - Test will also check for double records on a has_many relation
  */
 class GranadaTestEager extends PHPUnit_Framework_TestCase {
 
@@ -94,7 +98,6 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         foreach($car->parts as $p) {
             $actualParts[] = $p->as_array();
         }
-
 
         $expectedSql    = array();
         $expectedSql[]  = "SELECT * FROM `car` WHERE `id` = '1' LIMIT 1";
