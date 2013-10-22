@@ -1,5 +1,5 @@
 {
-    "name": "surt/Granada",
+    "name": "surt/granada",
     "type": "library",
     "description": "Paris and Idirom fork with eager loading support",
     "keywords": ["orm","eager-loading", "paris", "idiorm"],
