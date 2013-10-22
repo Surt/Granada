@@ -1,0 +1,30 @@
+{
+    "name": "surt/Granada",
+    "type": "library",
+    "description": "Paris and Idirom fork with eager loading support",
+    "keywords": ["orm","eager-loading", "paris", "idiorm"],
+    "homepage": "https://github.com/Surt/Granada",
+     "support": {
+        "issues": "https://github.com/Surt/Granada/issues",
+        "source": "https://github.com/Surt/Granada"
+    },
+    "license": [
+        "BSD-2-Clause",
+        "BSD-3-Clause",
+        "BSD-4-Clause"
+    ],
+    "authors": [
+        {
+            "name": "Erik Wiesenthal",
+            "email": "erikforo@hotmail.com",
+            "homepage": "www.codetogether.es",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "classmap": ["granada.php", "idiorm.php"]
+    }
+}
