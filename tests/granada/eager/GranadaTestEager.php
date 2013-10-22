@@ -109,13 +109,14 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         $expectedParts[] = array('id' => 1, 'name' => 'Part1');
 
         $fullQueryLog = ORM::get_query_log();
-        //print_r($fullQueryLog);
+
         // Return last three queries
         $actualSql = array_slice($fullQueryLog, count($fullQueryLog) - 2);
 
 
         $this->assertEquals($expectedSql, $actualSql);
         $this->assertEquals($expectedParts, $actualParts);
+        
     }
 
     public function testFindManyWith2BelongsTo() {
