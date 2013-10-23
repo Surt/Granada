@@ -1,13 +1,19 @@
 <phpunit backupGlobals="true"
          backupStaticAttributes="false"
-         bootstrap="test/bootstrap.php"
+         bootstrap="tests/granada/bootstrap.php"
          cacheTokens="false"
          colors="true">
     <testsuites>
-        <testsuite name="Paris Test Suite">
-            <directory suffix="Test.php">test</directory>
-            <directory suffix="Test53.php" phpVersion="5.3.0" phpVersionOperator=">=">test</directory>
-            <directory suffix="ParisEagerTest.php" phpVersion="5.2.0" phpVersionOperator=">=">test</directory>
+        <testsuite name="Granada Test Suite">
+            <directory suffix="Test.php">tests/granada</directory>
+            <directory suffix="Test53.php" phpVersion="5.3.0" phpVersionOperator=">=">tests/granada</directory>
+        </testsuite>
+        <testsuite name="Granada Eager Test Suite">
+            <directory suffix="TestEager.php">tests/granada/eager</directory>
+            <directory suffix="TestEager53.php" phpVersion="5.3.0" phpVersionOperator=">=">tests/granada/eager</directory>
         </testsuite>
     </testsuites>
+    <logging>
+        <log type="coverage-clover" target="clover.xml" />
+    </logging>
 </phpunit>

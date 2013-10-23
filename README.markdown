@@ -1,11 +1,14 @@
 Granada
 =====
 
-This is an Alpha version. No tested yet, handle with care
-[![Build Status](https://travis-ci.org/Surt/Paris.png?branch=master)](https://travis-ci.org/Surt/Paris)
+This is a Release Candidate version now :) it seems to be working well.
+Not fully unit tested yet, handle with care.
+
+[![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
 
 Granada now becomes a extended version of Idiorm/Paris, adding eager and lazy loading and lot of minor additions and changes.
-Update to Idiorm/Paris v1.4.0
+
+Updated to Idiorm/Paris v1.4.0
 
 Added eager loading
 --------------------
@@ -81,6 +84,11 @@ Triying to access to a not fetched relationship will call and return it
   }
 ```
 
+Notice that if there is no result for `avatar` on the above example it will throw a `Notice: Trying to get property of non-object...`
+Note:  Maybe worth the effort to create a NULL object for this use case and others.
+
+
+
 Multiple additions names for Granada
 ------------------------------------
 select_raw = select_expr
@@ -113,7 +121,7 @@ SET
     protected function set_title($value)
     {
         $this->alias = Str::slug($value);
-        $this->title = $value;
+        return $value;
     }
 ```
 ```php
@@ -135,6 +143,7 @@ SET
 GET
 ----
 Overload of get works only on non defined or empty attributes
+TODO:: check it to work on defined attributtes too
 ```php
     // In the Model
     protected function get_path(){
@@ -147,7 +156,36 @@ Overload of get works only on non defined or empty attributes
     echo $model->path; // returns 'whatever'
 ```
 
+Define resultSet class on Model
+-----------------------------------------
 
+Now is possible to define the resultSet class returned for a model instances result. (if `return_result_sets` config variable is set to true)
+Notice that the resultSet class defined must `extends IdiormResultSet` and must be loaded
+
+```php
+    // In the Model
+    public static $resultSetClass = 'TreeResultSet';
+```
+```php
+    // outside of the model
+    var_dump($model->find_many());
+
+    // echoes
+    object(TreeResultSet)[10]
+        protected '_results' => array(...)
+    ....
+```
+
+ResultSets are defined by the model in the result, as you can see above.
+On eager load, the results are consistent.
+For example, if we have a `Content` model, with `$resultSetClass = 'TreeResultSet'` and a `has_many` relationship defined as `media`:
+
+```php
+
+  Content::with('media')->find_many();
+
+```
+will return a TreeResultSet with instances of Content each with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
 
 
 Basic Documentation comes from Paris:
@@ -267,3 +305,7 @@ Changelog
 #### 1.0.0 - released 2010-12-01
 
 * Initial release
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Surt/granada/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+

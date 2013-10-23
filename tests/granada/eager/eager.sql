@@ -59,3 +59,4 @@ INSERT INTO car_part(id,car_id,part_id) VALUES (5,1,2);
 INSERT INTO car_part(id,car_id,part_id) VALUES (6,2,3);
 INSERT INTO car_part(id,car_id,part_id) VALUES (7,3,4);
 INSERT INTO car_part(id,car_id,part_id) VALUES (8,4,5);
+INSERT INTO car_part(id,car_id,part_id) VALUES (9,1,1);
