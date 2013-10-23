@@ -1,14 +1,9 @@
 Granada
 =====
 
-This is a Release Candidate version now :) it seems to be working well.
-Not fully unit tested yet, handle with care.
-
 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
 
-Granada now becomes a extended version of Idiorm/Paris, adding eager and lazy loading and lot of minor additions and changes.
-
-Updated to Idiorm/Paris v1.4.0
+Granada now becomes a extended version of Idiorm/Paris (v1.4.0), adding eager and lazy loading and lot of minor additions and changes.
 
 Added eager loading
 --------------------

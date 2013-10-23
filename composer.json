@@ -1,8 +1,8 @@
 {
     "name": "surt/granada",
     "type": "library",
-    "description": "Paris and Idirom fork with eager loading support",
-    "keywords": ["orm","eager-loading", "paris", "idiorm"],
+    "description": "ORM - Paris and Idiorm fork with eager loading support and more",
+    "keywords": ["orm","eager-loading", "paris", "idiorm", "database"],
     "homepage": "https://github.com/Surt/Granada",
      "support": {
         "issues": "https://github.com/Surt/Granada/issues",
