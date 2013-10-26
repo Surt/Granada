@@ -131,6 +131,8 @@ ModelName::aname($argument1, $argument2)->....
 - find_pairs : Return array of key=>value as result
 - save : accepts a boolean to use "ON DUPLICATE KEY UPDATE" (just for Mysql)
 - delete_many (accept join clauses)
+
+
 ---
 ### Overload SET
 
