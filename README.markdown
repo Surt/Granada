@@ -35,6 +35,28 @@ foreach ($posts as $post) {
 ```
 You can read the Paris Docs on [paris.readthedocs.org](http://paris.rtfd.org) but be sure to read the additions below.
 
+
+Install
+-------
+Using composer:
+```
+  "requires": {
+        ...
+        "surt/granada": "dev-master"
+        ...
+    }
+```
+
+Configure it:
+```php
+ORM::configure('mysql:host=localhost;dbname=my_database');
+ORM::configure('username', 'database_user');
+ORM::configure('password', 'top_secret');
+```
+
+As always, you can check it in detail on [Paris documentation](http://idiorm.readthedocs.org/en/latest/configuration.html#setup)
+
+
 Aditions
 --------
 
