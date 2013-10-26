@@ -20,10 +20,10 @@ class Post extends Model {}
 
 
 // select
-$user = User::where('name', 'Jhon')->find_one();
+$user = User::where('name', 'John')->find_one();
          
 // modify
-$user->first_name = 'Dhoe';
+$user->first_name = 'Doe';
 $user->save();
 
 // select relationship
