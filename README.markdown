@@ -27,7 +27,7 @@ $user->first_name = 'Doe';
 $user->save();
 
 // select relationship
-$post_list = $user->posts()->find_many();
+$post_list = User::posts()->find_many();
 foreach ($posts as $post) {
     echo $post->content;
 }
@@ -42,7 +42,7 @@ Aditions
 You can use the "with" method to add relationships eager loading to the query.
 
 ```php
-  $results = $user->with('avatar', 'posts')->find_many();
+  $results = User::with('avatar', 'posts')->find_many();
 ```
 will use 3 querys to fetch the users and the relationships:
 ```sql
@@ -67,7 +67,7 @@ It is possible to get the relationships results for each result, this way
 Triying to access to a not fetched relationship will call and return it
 
 ```php
-  $results = $user->find_many();
+  $results = User::find_many();
   foreach($results as $result){
       echo $result->avatar->img;
   }
@@ -85,7 +85,7 @@ It is possible to chain relationships and add arguments to the relationships cal
 
 ```php
    // chained relationships use the "with" reserved word.
-   $results = $user->with(array('posts'=>array('with'=>array('comments'))))->find_many();
+   $results = User::with(array('posts'=>array('with'=>array('comments'))))->find_many();
    foreach($results as $result){
       foreach($posts as $post){
          echo $post->title;
@@ -97,7 +97,7 @@ It is possible to chain relationships and add arguments to the relationships cal
 
 
    // using arguments (not just one) to call the relationships
-   $results = $user->with(array('posts'=>array('arg1')))->find_many();
+   $results = User::with(array('posts'=>array('arg1')))->find_many();
    // will call the relationship defined in the user model with the argument "arg1"
 
 ```
@@ -109,8 +109,8 @@ It's possible to create static functions on the model to work as filter in queri
 ```php
 class ModelName extends Model {
     ....
-    public static function filter_aname($orm, $argument1, $argument2...){
-        return $orm->where('property', 'value')->limit('X')......;
+    public static function filter_aname($query, $argument1, $argument2...){
+        return $query->where('property', 'value')->limit('X')......;
     }
     ....
 }
@@ -146,17 +146,17 @@ ModelName::aname($argument1, $argument2)->....
 ```
 ```php
     // outside of the model
-    $model->set('title', 'A title');
+    $content_instance->set('title', 'A title');
 
     // works with multiple set too
     $properties = array(
       'title'   => 'A title',
       'content' => 'Some content'
     );
-    $model->set($properties);
+    $content_instance->set($properties);
 
     // try it with a direct assignement
-    $model->title = 'A title';
+    $content_instance->title = 'A title';
 ```
 
 ---
@@ -172,7 +172,7 @@ Overload of get works only on non defined or empty attributes. You can define fu
     ...
 
     // outside of the model
-    echo $model->path; // returns 'whatever'
+    echo $content_instance->path; // returns 'whatever'
 ```
 ---
 ### Define resultSet (collection type) class on Model
@@ -186,7 +186,7 @@ Notice that the resultSet class defined must `extends IdiormResultSet` and must 
 ```
 ```php
     // outside of the model
-    var_dump($model->find_many());
+    var_dump(Content::find_many());
 
     // echoes
     object(TreeResultSet)[10]
