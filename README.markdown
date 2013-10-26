@@ -3,10 +3,42 @@ Granada
 
 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
 
-Granada now becomes a extended version of Idiorm/Paris (v1.4.0), adding eager and lazy loading and lot of minor additions and changes.
+Granada is a easy to use ORM based on Idiorm/Paris.
 
-Added eager loading
---------------------
+A quick view:
+------------
+
+
+```php
+class User extends Model {
+    public function posts() {
+        return $this->has_many('Post');
+    }
+}
+
+class Post extends Model {}
+
+
+// select
+$user = User::where('name', 'Jhon')->find_one();
+         
+// modify
+$user->first_name = 'Dhoe';
+$user->save();
+
+// select relationship
+$post_list = $user->posts()->find_many();
+foreach ($posts as $post) {
+    echo $post->content;
+}
+
+```
+You can read the Paris Docs on [paris.readthedocs.org](http://paris.rtfd.org) but be sure to read the additions below.
+
+Aditions
+--------
+
+### Eager loading
 You can use the "with" method to add relationships eager loading to the query.
 
 ```php
@@ -28,10 +60,27 @@ It is possible to get the relationships results for each result, this way
       }
   }
 ```
+---
+
+### Lazy loading
+
+Triying to access to a not fetched relationship will call and return it
+
+```php
+  $results = $user->find_many();
+  foreach($results as $result){
+      echo $result->avatar->img;
+  }
+```
+
+Notice that if there is no result for `avatar` on the above example it will throw a `Notice: Trying to get property of non-object...`
+Note:  Maybe worth the effort to create a NULL object for this use case and others.
+
+---
 
 
-Chained relationships with arguments for eager loading!
---------------------------------------------------------
+### Chained relationships with arguments for eager loading!
+
 It is possible to chain relationships and add arguments to the relationships calls
 
 ```php
@@ -52,14 +101,18 @@ It is possible to chain relationships and add arguments to the relationships cal
    // will call the relationship defined in the user model with the argument "arg1"
 
 ```
+---
+### Custom query filters 
 
-Added a new way to handle filters
-----------------------------------
-With the __call inclusion on the ORMWrapper now you can create static functions on the model,prepended with "filter_":
+It's possible to create static functions on the model to work as filter in queries. Prepended it with "filter_":
 
 ```php
-public static function filter_aname($orm, $argument1, $argument2...){
-    return $orm->where('property', 'value')->limit('X')......;
+class ModelName extends Model {
+    ....
+    public static function filter_aname($orm, $argument1, $argument2...){
+        return $orm->where('property', 'value')->limit('X')......;
+    }
+    ....
 }
 ```
 and call it on a static call
@@ -67,50 +120,20 @@ and call it on a static call
 ModelName::aname($argument1, $argument2)->....
 ```
 
+### Multiple additions names for Granada
+---
+- select_raw 
+- group_by_raw
+- order_by_raw
+- raw_join
+- insert : To create and save multiple elements from an array
+- pluck : returns a single column from the result.
+- find_pairs : Return array of key=>value as result
+- save : accepts a boolean to use "ON DUPLICATE KEY UPDATE" (just for Mysql)
+- delete_many (accept join clauses)
+---
+### Overload SET
 
-Lazy loading
--------------
-Triying to access to a not fetched relationship will call and return it
-
-```php
-  $results = $user->find_many();
-  foreach($results as $result){
-      echo $result->avatar->img;
-  }
-```
-
-Notice that if there is no result for `avatar` on the above example it will throw a `Notice: Trying to get property of non-object...`
-Note:  Maybe worth the effort to create a NULL object for this use case and others.
-
-
-
-Multiple additions names for Granada
-------------------------------------
-select_raw = select_expr
-
-group_by_raw
-
-order_by_raw
-
-raw_join
-
-insert : To create and save multiple elements from an array
-
-pluck : returns a single column from the result.
-
-find_pairs : Return array of key=>value as result
-
-save : accepts now a boolean to use "ON DUPLICATE KEY UPDATE" (just for Mysql)
-
-delete_many : you could use it to delete from a join clause, defining the table that you want to delete
-
-
-
-Added overload to set and get properties
------------------------------------------
-
-SET
-----
 ```php
     // In the Model
     protected function set_title($value)
@@ -134,11 +157,10 @@ SET
     $model->title = 'A title';
 ```
 
+---
+### Overload GET
 
-GET
-----
-Overload of get works only on non defined or empty attributes
-TODO:: check it to work on defined attributtes too
+Overload of get works only on non defined or empty attributes. You can define functions with the property name if you want to overload it completely.
 ```php
     // In the Model
     protected function get_path(){
@@ -150,9 +172,8 @@ TODO:: check it to work on defined attributtes too
     // outside of the model
     echo $model->path; // returns 'whatever'
 ```
-
-Define resultSet class on Model
------------------------------------------
+---
+### Define resultSet (collection type) class on Model
 
 Now is possible to define the resultSet class returned for a model instances result. (if `return_result_sets` config variable is set to true)
 Notice that the resultSet class defined must `extends IdiormResultSet` and must be loaded
@@ -188,12 +209,10 @@ Basic Documentation comes from Paris:
 Paris
 =====
 
----
 ### Feature complete
 
 Paris is now considered to be feature complete as of version 1.4.0. Whilst it will continue to be maintained with bug fixes there will be no further new features added.
 
----
 
 A lightweight Active Record implementation for PHP5.
 
@@ -215,91 +234,6 @@ Features
 * Database agnostic. Currently supports SQLite, MySQL, Firebird and PostgreSQL. May support others, please give it a try!
 * Supports collections of models with method chaining to filter or apply actions to multiple results at once.
 * Multiple connections are supported
-
-Documentation
--------------
-
-The documentation is hosted on Read the Docs: [paris.rtfd.org](http://paris.rtfd.org)
-
-### Building the Docs ###
-
-You will need to install [Sphinx](http://sphinx-doc.org/) and then in the docs folder run:
-
-    make html
-
-The documentation will now be in docs/_build/html/index.html
-
-Let's See Some Code
--------------------
-```php
-class User extends Model {
-    public function tweets() {
-        return $this->has_many('Tweet');
-    }
-}
-
-class Tweet extends Model {}
-
-$user = Model::factory('User')
-    ->where_equal('username', 'j4mie')
-    ->find_one();
-$user->first_name = 'Jamie';
-$user->save();
-
-$tweets = $user->tweets()->find_many();
-foreach ($tweets as $tweet) {
-    echo $tweet->text;
-}
-```
-
-Changelog
----------
-
-#### 1.4.1 - released 2013-09-05
-
-* Increment composer.json requirement for Idiorm to 1.4.0 [[michaelward82](https://github.com/michaelward82)] - [Issue #72](https://github.com/j4mie/paris/pull/72)
-
-#### 1.4.0 - released 2013-09-05
-
-* Call methods against model class directly eg. `User::find_many()` - PHP 5.3 only [[Lapayo](https://github.com/Lapayo)] - [issue #62](https://github.com/j4mie/idiorm/issues/62)
-* `find_many()` now returns an associative array with the databases primary ID as the array keys [[Surt](https://github.com/Surt)] - see commit [9ac0ae7](https://github.com/j4mie/paris/commit/9ac0ae7d302f1980c95b97a98cbd6d5b2c04923f) and Idiorm [issue #133](https://github.com/j4mie/idiorm/issues/133)
-* Add PSR-1 compliant camelCase method calls to Idiorm (PHP 5.3+ required) [[crhayes](https://github.com/crhayes)] - [issue #59](https://github.com/j4mie/idiorm/issues/59)
-* Allow specification of connection on relation methods [[alexandrusavin](https://github.com/alexandrusavin)] - [issue #55](https://github.com/j4mie/idiorm/issues/55)
-* Make tests/bootstrap.php HHVM compatible [[JoelMarcey](https://github.com/JoelMarcey)] - [issue #71](https://github.com/j4mie/idiorm/issues/71)
-* belongs_to doesn't work with $auto_prefix_models ([issue #70](https://github.com/j4mie/paris/issues/70))
-
-#### 1.3.0 - released 2013-01-31
-
-* Documentation moved to [paris.rtfd.org](http://paris.rtfd.org) and now built using [Sphinx](http://sphinx-doc.org/)
-* Add support for multiple database connections [[tag](https://github.com/tag)] - [issue #15](https://github.com/j4mie/idiorm/issues/15)
-* Allow a prefix for model class names - see Configuration in the documentation - closes [issues #33](https://github.com/j4mie/paris/issues/33)
-* Exclude tests and git files from git exports (used by composer)
-* Implement `set_expr` - closes [issue #39](https://github.com/j4mie/paris/issues/39)
-* Add `is_new` - closes [issue #40](https://github.com/j4mie/paris/issues/40)
-* Add support for the new IdiormResultSet object in Idiorm - closes [issue #14](https://github.com/j4mie/paris/issues/14)
-* Change Composer to use a classmap so that autoloading is better supported [[javierd](https://github.com/javiervd)] - [issue #44](https://github.com/j4mie/paris/issues/44)
-* Move tests into PHPUnit to match Idiorm
-* Update included Idiorm version for tests
-* Move documentation to use Sphinx
-
-#### 1.2.0 - released 2012-11-14
-
-* Setup composer for installation via packagist (j4mie/paris)
-* Add in basic namespace support, see [issue #20](https://github.com/j4mie/paris/issues/20)
-* Allow properties to be set as an associative array in `set()`, see [issue #13](https://github.com/j4mie/paris/issues/13)
-* Patch in idiorm now allows empty models to be saved (j4mie/idiorm see [issue #58](https://github.com/j4mie/paris/issues/58))
-
-#### 1.1.1 - released 2011-01-30
-
-* Fix incorrect tests, see [issue #12](https://github.com/j4mie/paris/issues/12)
-
-#### 1.1.0 - released 2011-01-24
-
-* Add `is_dirty` method
-
-#### 1.0.0 - released 2010-12-01
-
-* Initial release
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Surt/granada/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
