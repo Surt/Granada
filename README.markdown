@@ -3,7 +3,7 @@ Granada
 
 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
 
-Granada is a easy to use ORM based on Idiorm/Paris.
+Granada is a easy to use Active Record implementation, and ORM based on Idiorm/Paris.
 
 A quick view:
 ------------
