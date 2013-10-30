@@ -40,10 +40,10 @@ Install
 -------
 Using composer:
 ```
-  "requires": {
-        ...
+  "require": {
+        
         "surt/granada": "dev-master"
-        ...
+      
     }
 ```
 
