@@ -165,12 +165,12 @@
          * or a array multiple
          *
          */
-        public function insert($rows)
+        public function insert($rows, $ignore = false)
         {
             ORM::get_db()->beginTransaction();
             foreach ($rows as $row) {
                 $class = $this->_class_name;
-                $class::create($row)->save();
+                $class::create($row)->save($ignore);
             }
             ORM::get_db()->commit();
             return ORM::get_db()->lastInsertId();
@@ -669,7 +669,7 @@
             {
                 return $this->$method();
             }
-            elseif(isset($this->relationships[$property]))
+            elseif(array_key_exists($property, $this->relationships))
             {
                 return $this->relationships[$property];
             }
@@ -699,7 +699,7 @@
          * Magic isset method, allows isset($model->property) to work correctly.
          */
         public function __isset($property) {
-            return (isset($this->relationships[$property]) || $this->orm->__isset($property) || method_exists($this, $method = 'get_'.$property));
+            return (array_key_exists($property, $this->relationships) || $this->orm->__isset($property) || method_exists($this, $method = 'get_'.$property));
         }
 
         /**
@@ -800,8 +800,8 @@
         /**
          * Save the data associated with this model instance to the database.
          */
-        public function save() {
-            return $this->orm->save();
+        public function save($ignore = false) {
+            return $this->orm->save($ignore);
         }
 
         /**
@@ -985,7 +985,6 @@
         }
 
 
-        // TODO;;
         /**
          * Eagerly load a 1:1 belonging relationship.
          *
