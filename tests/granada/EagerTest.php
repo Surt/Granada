@@ -1,5 +1,8 @@
 <?php
 
+use Granada\Orm;
+use Granada\Model;
+
 /**
  * Testing eager loading
  *
@@ -9,7 +12,7 @@
  * Additions:
  *  - Test will also check for double records on a has_many relation
  */
-class GranadaTestEager extends PHPUnit_Framework_TestCase {
+class EagerTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
 
@@ -18,7 +21,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         ORM::set_db(new PDO('sqlite::memory:'));
 
         // Create schemas and populate with data
-        ORM::get_db()->exec(file_get_contents(dirname(__FILE__) . '/eager.sql'));
+        ORM::get_db()->exec(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . '..'.DIRECTORY_SEPARATOR.'models.sql'));
 
         // Enable logging
         ORM::configure('logging', true);

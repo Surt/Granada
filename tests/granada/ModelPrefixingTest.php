@@ -1,4 +1,6 @@
 <?php
+use Granada\Orm;
+use Granada\Model;
 
 class ModelPrefixingTest extends PHPUnit_Framework_TestCase {
 
@@ -8,7 +10,7 @@ class ModelPrefixingTest extends PHPUnit_Framework_TestCase {
 
         // Enable logging
         ORM::configure('logging', true);
-        
+
         Model::$auto_prefix_models = null;
     }
 
@@ -20,7 +22,7 @@ class ModelPrefixingTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testStaticPropertyExists() {
-        $this->assertClassHasStaticAttribute('auto_prefix_models', 'Model');
+        $this->assertClassHasStaticAttribute('auto_prefix_models', 'Granada\Model');
         $this->assertInternalType('null', Model::$auto_prefix_models);
     }
 
@@ -54,5 +56,5 @@ class ModelPrefixingTest extends PHPUnit_Framework_TestCase {
         $expected = 'SELECT * FROM `simple`';
         $this->assertEquals($expected, ORM::get_last_query());
     }
-    
+
 }

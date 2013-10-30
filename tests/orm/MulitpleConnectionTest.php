@@ -1,5 +1,8 @@
 <?php
 
+use Granada\ORM;
+use Granada\ResultSet;
+
 class MultipleConnectionTest extends PHPUnit_Framework_TestCase {
 
     const ALTERNATE = 'alternate'; // Used as name of alternate connection
