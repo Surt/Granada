@@ -116,7 +116,7 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($expectedSql, $actualSql);
         $this->assertEquals($expectedParts, $actualParts);
-        
+
     }
 
     public function testFindManyWith2BelongsTo() {
@@ -231,5 +231,10 @@ class GranadaTestEager extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expectedSql, $actualSql);
         $this->assertEquals($expectedParts, $actualParts);
 
+    }
+
+    public function testLazyLoading() {
+        $owner = Model::factory('Owner')->find_one(1);
+        $this->assertEquals($owner->car->manufactor_id, 1);
     }
 }
