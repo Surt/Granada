@@ -1846,7 +1846,7 @@
                     }
                 }
             }
-
+            $this->clear_cache();
             $this->_dirty_fields = $this->_expr_fields = array();
             return $success;
         }
@@ -2190,6 +2190,18 @@
          */
         public function as_array() {
             return $this->get_results();
+        }
+
+        /**
+         * Get the current result set as an array
+         * @return array
+         */
+        public function as_json() {
+            $result = array();
+            foreach($this->_results as $key=>$value){
+                $result[] = $value->as_array();
+            }
+            return json_encode($result);
         }
 
         /**
