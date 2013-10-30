@@ -692,7 +692,7 @@ class ORM implements ArrayAccess {
      */
     public function find_result_set() {
         $resultSetClass = $this->resultSetClass;
-        if(is_a($resultSetClass, 'ResultSet', true)){
+        if(is_a($resultSetClass, 'Granada\ResultSet', true)){
             $result = new $resultSetClass($this->_find_many());
         }
         else{
