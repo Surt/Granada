@@ -428,6 +428,7 @@ use ArrayAccess;
             foreach ($property as $field => $val) {
                 if(method_exists($this, $method = 'set_'.$field)){
                     $property[$field] = $this->$method($val);
+                    $value = null;
                 }
                 elseif(!is_array($property) && method_exists($this, $property)){
                     $this->relationships[$property] = $value;
