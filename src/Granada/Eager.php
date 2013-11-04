@@ -51,6 +51,11 @@
             return $results;
         }
 
+        /**
+         * return the associative keys of a result set or the ids of an array of objects
+         * @param  ResultSet|array $parents ResultSet or Array to check for keys
+         * @return array           array of primary keys
+         */
         public static function getKeys($parents){
             $keys = array();
             $parents = ($parents instanceof ResultSet)?$parents->as_array():$parents;
