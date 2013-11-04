@@ -51,6 +51,23 @@
             return $results;
         }
 
+        public static function getKeys($parents){
+            $keys = array();
+            $parents = ($parents instanceof ResultSet)?$parents->as_array():$parents;
+
+            if(key($parents) === 0)  {
+                $count = count($parents);
+                for($i=0; $i<$count; $i++){
+                    $keys[] = $parents[$i]->id;
+                }
+            }
+            else {
+                $keys = array_keys($parents);
+            }
+
+            return $keys;
+        }
+
 
         /**
          * Eagerly load a relationship.
@@ -100,12 +117,33 @@
          */
         private static function has_one($relationship, &$parents, $relating_key, $include, $return_result_set)
         {
-            $keys = array_keys(($parents instanceof ResultSet)?$parents->as_array():$parents);
+            $keys = static::getKeys($parents);
             $related = $relationship->where_in($relating_key, $keys)->find_many();
-            foreach ($related as $key => $child)
-            {
-                if(!isset($parents[$child->$relating_key]->relationships[$include])){
-                    $parents[$child->$relating_key]->relationships[$include] = $child;
+
+            // if parents is not a associative array
+            if(key(reset($parents)) === 0)  {
+                $results = array();
+                foreach ($related as $key => $child)
+                {
+                    if(!isset($results[$child[$relating_key]])){
+                        $results[$child[$relating_key]] = $child;
+                    }
+                }
+
+                foreach($parents as $p_key=>$parent){
+                    foreach($results as $r_key=>$result){
+                        if($parent->id == $r_key){
+                           $parents[$p_key]->relationships[$include] = $result;
+                        }
+                    }
+                }
+            }
+            else {
+                foreach ($related as $key => $child)
+                {
+                    if(!isset($parents[$child->$relating_key]->relationships[$include])){
+                        $parents[$child->$relating_key]->relationships[$include] = $child;
+                    }
                 }
             }
         }
@@ -123,18 +161,41 @@
          */
         private static function has_many($relationship, &$parents, $relating_key, $include, $return_result_set)
         {
-            $keys = array_keys(($parents instanceof ResultSet)?$parents->as_array():$parents);
-
+            $keys = static::getKeys($parents);
             $related = $relationship->where_in($relating_key, $keys)->find_many();
-            foreach ($related as $key => $child)
-            {
-                // if resultSet must be returned, create it if the relationships key is not defined
-                if(empty($parents[$child[$relating_key]]->relationships[$include]) && $return_result_set){
-                    $resultSetClass = $child->get_resultSetClass();
-                    $parents[$child->$relating_key]->relationships[$include] = new $resultSetClass();
+
+            // if parents is not a associative array
+            if(key(reset($parents)) === 0)  {
+                $results = array();
+                foreach ($related as $key => $child)
+                {
+                    if(empty($results[$child[$relating_key]]) && $return_result_set){
+                        $resultSetClass = $child->get_resultSetClass();
+                        $results[$child[$relating_key]] = new $resultSetClass();
+                    }
+                    $results[$child[$relating_key]][$child->id] = $child;
                 }
-                // add the instance to the relationship array-resultSet
-                $parents[$child->$relating_key]->relationships[$include][$child->id()] = $child;
+
+                foreach($parents as $p_key=>$parent){
+                    foreach($results as $r_key=>$result){
+                        if($parent->id == $r_key){
+                           $parents[$p_key]->relationships[$include] = $result;
+                        }
+                    }
+                }
+            }
+            else {
+                // if parents is an associative array
+                foreach ($related as $key => $child)
+                {
+                    // if resultSet must be returned, create it if the relationships key is not defined
+                    if(empty($parents[$child[$relating_key]]->relationships[$include]) && $return_result_set){
+                        $resultSetClass = $child->get_resultSetClass();
+                        $parents[$child->$relating_key]->relationships[$include] = new $resultSetClass();
+                    }
+                    // add the instance to the relationship array-resultSet
+                    $parents[$child->$relating_key]->relationships[$include][$child->id()] = $child;
+                }
             }
         }
 
@@ -181,7 +242,7 @@
          */
         private static function has_many_through($relationship, &$parents, $relating_key, $relating_table, $include, $return_result_set)
         {
-            $keys = array_keys(($parents instanceof ResultSet)?$parents->as_array():$parents);
+            $keys = static::getKeys($parents);
 
             // The foreign key is added to the select to allow us to easily match the models back to their parents.
             // Otherwise, there would be no apparent connection between the models to allow us to match them.
