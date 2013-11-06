@@ -1,7 +1,9 @@
-Granada v1.5
+Granada
 =====
 
-[![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
+[![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada) 
+[![Latest Stable Version](https://poser.pugx.org/surt/granada/v/stable.png)](https://packagist.org/packages/surt/granada)
+
 
 Granada is a easy to use Active Record implementation, and ORM based on Idiorm/Paris.
 
