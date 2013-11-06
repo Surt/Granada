@@ -152,8 +152,8 @@ and call it on a static call
 ModelName::aname($argument1, $argument2)->....
 ```
 
-### Multiple additions names for Granada
 ---
+### Multiple additions names for Granada
 - select_raw
 - group_by_raw
 - order_by_raw
@@ -237,7 +237,7 @@ For example, if we have a `Content` model, with `$resultSetClass = 'TreeResultSe
 ```
 will return a `TreeResultSet` with instances of `Content` each with a `property $media` containing `Granada\ResultSet` (the default resultSet if none if defined on the Model)
 
-
+---
 Basic Documentation comes from Paris:
 -------------------------------------
 Paris
