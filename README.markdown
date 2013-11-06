@@ -1,7 +1,7 @@
 Granada
 =====
 
-[![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
+v1.5 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
 
 Granada is a easy to use Active Record implementation, and ORM based on Idiorm/Paris.
 
@@ -10,6 +10,9 @@ A quick view:
 
 
 ```php
+
+use Granada\Model;
+
 class User extends Model {
     public function posts() {
         return $this->has_many('Post');
@@ -21,7 +24,7 @@ class Post extends Model {}
 
 // select
 $user = User::where('name', 'John')->find_one();
-         
+
 // modify
 $user->first_name = 'Doe';
 $user->save();
@@ -41,17 +44,22 @@ Install
 Using composer:
 ```
   "require": {
-        
+
         "surt/granada": "dev-master"
-      
+
     }
 ```
 
 Configure it:
 ```php
+require 'vendor/autoload.php';
+
+use Granada\ORM;
+
 ORM::configure('mysql:host=localhost;dbname=my_database');
 ORM::configure('username', 'database_user');
 ORM::configure('password', 'top_secret');
+
 ```
 
 As always, you can check it in detail on [Paris documentation](http://idiorm.readthedocs.org/en/latest/configuration.html#setup)
@@ -118,17 +126,19 @@ It is possible to chain relationships and add arguments to the relationships cal
    }
 
 
-   // using arguments (not just one) to call the relationships
+   // you can use arguments (one or more) to call the models relationships
    $results = User::with(array('posts'=>array('arg1')))->find_many();
    // will call the relationship defined in the user model with the argument "arg1"
 
 ```
 ---
-### Custom query filters 
+### Custom query filters
 
 It's possible to create static functions on the model to work as filter in queries. Prepended it with "filter_":
 
 ```php
+use Granada\Model;
+
 class ModelName extends Model {
     ....
     public static function filter_aname($query, $argument1, $argument2...){
@@ -144,7 +154,7 @@ ModelName::aname($argument1, $argument2)->....
 
 ### Multiple additions names for Granada
 ---
-- select_raw 
+- select_raw
 - group_by_raw
 - order_by_raw
 - raw_join
@@ -200,7 +210,7 @@ Overload of get works only on non defined or empty attributes. You can define fu
 ### Define resultSet (collection type) class on Model
 
 Now is possible to define the resultSet class returned for a model instances result. (if `return_result_sets` config variable is set to true)
-Notice that the resultSet class defined must `extends IdiormResultSet` and must be loaded
+Notice that the resultSet class defined must `extends Granada\ResultSet` and must be loaded
 
 ```php
     // In the Model
@@ -225,7 +235,7 @@ For example, if we have a `Content` model, with `$resultSetClass = 'TreeResultSe
   Content::with('media')->find_many();
 
 ```
-will return a TreeResultSet with instances of Content each with a `property $media` containing a `IdiormResultSet` (the default resultSet if none if defined on the Model)
+will return a `TreeResultSet` with instances of `Content` each with a `property $media` containing `Granada\ResultSet` (the default resultSet if none if defined on the Model)
 
 
 Basic Documentation comes from Paris:
