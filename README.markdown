@@ -46,7 +46,6 @@ Using composer:
       
     }
 ```
-(You could try the `dev-develop` branch too. It consists in the same component Namespace based. Some names, as IdiormResultSet changed, (Granada\ResultSet)
 
 Configure it:
 ```php

@@ -1,5 +1,7 @@
 <?php
 
+use Granada\ORM;
+
 class QueryBuilderMssqlTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
@@ -27,6 +29,6 @@ class QueryBuilderMssqlTest extends PHPUnit_Framework_TestCase {
         $expected = 'SELECT TOP 5 * FROM "widget"';
         $this->assertEquals($expected, ORM::get_last_query());
     }
-    
+
 }
 

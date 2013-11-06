@@ -1,4 +1,6 @@
 <?php
+use Granada\Orm;
+use Granada\Model;
 
 class GranadaTest extends PHPUnit_Framework_TestCase {
 

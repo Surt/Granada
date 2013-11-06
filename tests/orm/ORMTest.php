@@ -1,5 +1,7 @@
 <?php
 
+use Granada\ORM;
+
 class ORMTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
@@ -23,12 +25,12 @@ class ORMTest extends PHPUnit_Framework_TestCase {
 
     public function testForTable() {
         $result = ORM::for_table('test');
-        $this->assertInstanceOf('ORM', $result);
+        $this->assertInstanceOf('Granada\ORM', $result);
     }
 
     public function testCreate() {
         $model = ORM::for_table('test')->create();
-        $this->assertInstanceOf('ORM', $model);
+        $this->assertInstanceOf('Granada\ORM', $model);
         $this->assertTrue($model->is_new());
     }
 
@@ -43,7 +45,7 @@ class ORMTest extends PHPUnit_Framework_TestCase {
     public function testIsDirty() {
         $model = ORM::for_table('test')->create();
         $this->assertFalse($model->is_dirty('test'));
-        
+
         $model = ORM::for_table('test')->create(array('test' => 'test'));
         $this->assertTrue($model->is_dirty('test'));
     }
@@ -60,7 +62,7 @@ class ORMTest extends PHPUnit_Framework_TestCase {
 
     public function testFindResultSet() {
         $result_set = ORM::for_table('test')->find_result_set();
-        $this->assertInstanceOf('IdiormResultSet', $result_set);
+        $this->assertInstanceOf('Granada\ResultSet', $result_set);
         $this->assertSame(count($result_set), 5);
     }
 
@@ -68,11 +70,11 @@ class ORMTest extends PHPUnit_Framework_TestCase {
         ORM::configure('return_result_sets', true);
 
         $result_set = ORM::for_table('test')->find_many();
-        $this->assertInstanceOf('IdiormResultSet', $result_set);
+        $this->assertInstanceOf('Granada\ResultSet', $result_set);
         $this->assertSame(count($result_set), 5);
-        
+
         ORM::configure('return_result_sets', false);
-        
+
         $result_set = ORM::for_table('test')->find_many();
         $this->assertInternalType('array', $result_set);
         $this->assertSame(count($result_set), 5);
