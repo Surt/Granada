@@ -3,7 +3,7 @@ Granada
 
 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada) 
 [![Latest Stable Version](https://poser.pugx.org/surt/granada/v/stable.png)](https://packagist.org/packages/surt/granada)
-
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Surt/granada/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Granada is a easy to use Active Record implementation, and ORM based on Idiorm/Paris.
 
@@ -272,5 +272,5 @@ Features
 * Multiple connections are supported
 
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Surt/granada/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 
