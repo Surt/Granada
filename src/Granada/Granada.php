@@ -430,8 +430,8 @@ use ArrayAccess;
                     $property[$field] = $this->$method($val);
                     $value = null;
                 }
-                elseif(!is_array($property) && method_exists($this, $property)){
-                    $this->relationships[$property] = $value;
+                elseif(method_exists($this, $field)){
+                    $this->relationships[$field] = $val;
                 }
             }
             $result = $this->orm->set($property, $value);
