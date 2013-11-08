@@ -236,6 +236,32 @@ class EagerTest extends PHPUnit_Framework_TestCase {
 
     }
 
+    public function testChainedRelationships() {
+        $owner = Owner::with(array('car'=>array('with'=>'manufactor')))->find_one(1);
+        $fullQueryLog = ORM::get_query_log();
+        // Return last three queries
+        $actualSql = array_slice($fullQueryLog, count($fullQueryLog) - 3);
+
+        $expectedSql    = array();
+        $expectedSql[]  = "SELECT * FROM `owner` WHERE `id` = '1' LIMIT 1";
+        $expectedSql[]  = "SELECT * FROM `car` WHERE `owner_id` IN ('1')";
+        $expectedSql[]  = "SELECT * FROM `manufactor` WHERE `id` IN ('1')";
+
+        $this->assertEquals($expectedSql, $actualSql);
+    }
+
+    public function testChainedAdterHas_Many_Through() {
+        $car = Car::with(array('parts'=>array('with'=>'cars')))->find_one(1);
+        $test_exists = $car->as_array();
+        $test_exists = $car->parts->as_array();
+        foreach($car->parts as $part){
+            foreach($part->cars as $car){
+                $test_exists = $car->as_array();
+            };
+        }
+        // NO FATAL ERRORS OR EXCEPTIONS THROW
+    }
+
     public function testLazyLoading() {
         $owner = Model::factory('Owner')->find_one(1);
         $this->assertEquals($owner->car->manufactor_id, 1);

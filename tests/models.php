@@ -38,6 +38,18 @@ class Car extends Model {
     public function parts() {
         return $this->has_many_through('Part');
     }
+
+    public function get_nonExistentProperty(){
+        return "test";
+    }
+
+    public function set_name($value){
+        return 'test';
+    }
+
+    public static function filter_byName($query, $name){
+        return $query->where('name', $name);
+    }
  }
 
 class CarPart extends Model { }
