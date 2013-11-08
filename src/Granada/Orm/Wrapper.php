@@ -2,6 +2,7 @@
 
 use Granada\ORM;
 use Granada\Eager;
+use Exception;
 
 /**
  * Subclass of Idiorm's ORM class that supports
@@ -71,6 +72,7 @@ class Wrapper extends ORM {
         }
         $model = new $this->_class_name();
         $orm->resultSetClass = $model->get_resultSetClass();
+        $orm->set_class_name($this->_class_name);
         $model->set_orm($orm);
         return $model;
     }
@@ -198,7 +200,7 @@ class Wrapper extends ORM {
      */
     public function pluck($column)
     {
-        $result = (array) $this->find_one();
+        $result = (array) $this->select($column)->find_one();
 
         if(count($result) > 0) {
             $row = reset($result);
