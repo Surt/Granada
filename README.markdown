@@ -1,7 +1,7 @@
 Granada
 =====
 
-[![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada) 
+[![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
 [![Latest Stable Version](https://poser.pugx.org/surt/granada/v/stable.png)](https://packagist.org/packages/surt/granada)
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Surt/granada/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
@@ -116,8 +116,19 @@ Note:  Maybe worth the effort to create a NULL object for this use case and othe
 It is possible to chain relationships and add arguments to the relationships calls
 
 ```php
-   // chained relationships use the "with" reserved word.
+
+   // chained relationships with dot notation
+   $results = User::with('posts.comments')->find_many();
+
+   // OR
+
+   // chained relationships use the "with" reserved word. (usefull if you want to pass arguments to the relationships)
    $results = User::with(array('posts'=>array('with'=>array('comments'))))->find_many();
+
+    // SELECT * FROM user
+    // SELECT * FROM post WHERE user_id IN (....)
+    // SELECT * FROM comments WHERE post_id IN (....)
+
    foreach($results as $result){
       foreach($posts as $post){
          echo $post->title;
