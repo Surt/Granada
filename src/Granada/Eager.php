@@ -10,6 +10,7 @@
     * to works with idiorm + http://github.com/j4mie/paris/
     *
     */
+    use Exception;
 
     class Eager
     {
@@ -24,28 +25,44 @@
             {
                 foreach ($orm->relationships as $include)
                 {
-                    $relationship      = (is_array($include))?key($include):$include;
-                    $relationship_args = array();
-                    $relationship_with = false;
 
-                   // check args and eager loading for relationships
+                    $relationship      = false;
+                    $relationship_with = null;
+                    $relationship_args = array();
+
                     if(is_array($include)){
+                        $relationship      = key($include);
                         if(isset($include[$relationship]['with'])){
-                            $relationship_with = $include[$relationship]['with'];
-                            unset($include[$relationship]['with']);    // don't add eager loading relationships for the eager load args
+                           $relationship_with = $include[$relationship]['with'];
+                           unset($include[$relationship]['with']);
                         }
                         $relationship_args = $include[$relationship];
                     }
+                    else {
+                        $relationship = $include;
+                    }
+
+                    if($pos = strpos($relationship, '.')){
+                        $relationship_with = substr($relationship, $pos+1, strlen($relationship));
+                        $relationship      = substr($relationship, 0, $pos);
+                        $relationship_args = array();
+                    }
+
+                    $relationship = array(
+                        'name' => $relationship,
+                        'with' => $relationship_with,
+                        'args' => (array)$relationship_args
+                    );
 
                     // check if relationship exists on the model
                     $model = $orm->create();
 
-                    if (!method_exists($model, $relationship))
+                    if (!method_exists($model, $relationship['name']))
                     {
-                        throw new \LogicException("Attempting to eager load [$relationship], but the relationship is not defined.");
+                        throw new Exception("Attempting to eager load [{$relationship['name']}], but the relationship is not defined.", '500');
                     }
 
-                    self::eagerly($model, $results, $relationship, $relationship_args, $relationship_with, $return_result_set);
+                    self::eagerly($model, $results, $relationship, $return_result_set);
                 }
             }
             return $results;
@@ -83,29 +100,29 @@
          * @param  string  $include
          * @return void
          */
-        private static function eagerly($model, &$parents, $include, $relationship_args = array(), $relationship_with = false, $return_result_set)
+        private static function eagerly($model, &$parents, $include, $return_result_set)
         {
-            if($relationship = call_user_func_array(array($model,$include), $relationship_args)){
+            if($relationship = call_user_func_array(array($model, $include['name']), $include['args'])){
 
                 $relationship->reset_relation();
 
-                if($relationship_with) $relationship->with($relationship_with);
+                if($include['with']) $relationship->with($include['with']);
 
                 // Initialize the relationship attribute on the parents. As expected, "many" relationships
                 // are initialized to an array and "one" relationships are initialized to null.
                 // added: many relationships are reset to array since we don't know yet the resultSet applicable
                 foreach ($parents as &$parent)
                 {
-                    $parent->relationships[$include] = (in_array($model->relating, array('has_many', 'has_many_through'))) ? array() : null;
+                    $parent->relationships[$include['name']] = (in_array($model->relating, array('has_many', 'has_many_through'))) ? array() : null;
                 }
 
                 if (in_array($relating = $model->relating, array('has_one', 'has_many', 'belongs_to')))
                 {
-                    return self::$relating($relationship, $parents, $model->relating_key, $include, $return_result_set);
+                    return self::$relating($relationship, $parents, $model->relating_key, $include['name'], $return_result_set);
                 }
                 else
                 {
-                    self::has_many_through($relationship, $parents, $model->relating_key, $model->relating_table, $include, $return_result_set);
+                    self::has_many_through($relationship, $parents, $model->relating_key, $model->relating_table, $include['name'], $return_result_set);
                 }
             }
         }
