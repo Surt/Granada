@@ -47,6 +47,7 @@ class Wrapper extends ORM {
         if (method_exists($this->_class_name, $filter_function)) {
             return call_user_func_array(array($this->_class_name, $filter_function), $args);
         }
+        return $this;
     }
 
     /**
@@ -200,11 +201,10 @@ class Wrapper extends ORM {
      */
     public function pluck($column)
     {
-        $result = (array) $this->select($column)->find_one();
+        $result = $this->select($column)->find_one();
 
-        if(count($result) > 0) {
-            $row = reset($result);
-            return $row[$column];
+        if($result) {
+            return $result[$column];
         }
         else {
             return null;
