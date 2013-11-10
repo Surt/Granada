@@ -67,9 +67,14 @@ class GranadaNewTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $car, 'Call from static and from factory are the same');
     }
 
-    public function testPluck(){
+    public function testPluckValid(){
         $id = Car::where_id_is(1)->pluck('id');
         $this->assertEquals(1, $id, 'PLuck a column');
+    }
+
+    public function testPluckInvalid(){
+        $id = Car::where_id_is(10)->pluck('id');
+        $this->assertNull($id);
     }
 
     public function testfindPairs(){
@@ -81,6 +86,11 @@ class GranadaNewTest extends PHPUnit_Framework_TestCase {
             '4' => 'Car4'
         );
         $this->assertEquals($expected, $pairs);
+    }
+
+    public function testNoResultsfindPairs(){
+        $pairs = Car::where('id',10)->find_pairs('id', 'name');
+        $this->assertNull($pairs);
     }
 
     public function testfilters(){
@@ -107,7 +117,4 @@ class GranadaNewTest extends PHPUnit_Framework_TestCase {
         $count = Car::count();
         $this->assertEquals(5, $count, 'Car must be Inserted');
     }
-
-
-
 }

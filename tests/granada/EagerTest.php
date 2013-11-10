@@ -260,6 +260,7 @@ class EagerTest extends PHPUnit_Framework_TestCase {
             };
         }
         // NO FATAL ERRORS OR EXCEPTIONS THROW
+        $this->assertInstanceOf('Granada\Model', $car);
     }
 
     public function testLazyLoading() {
