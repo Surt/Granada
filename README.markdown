@@ -127,7 +127,7 @@ It is possible to chain relationships and add arguments to the relationships cal
 
     // SELECT * FROM user
     // SELECT * FROM post WHERE user_id IN (....)
-    // SELECT * FROM comment WHERE post_id IN (....)
+    // SELECT * FROM comments WHERE post_id IN (....)
 
    foreach($results as $result){
       foreach($posts as $post){
