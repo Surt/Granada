@@ -2,7 +2,7 @@ language: php
 php:
   - 5.3
   - 5.4
-script: "phpunit --colors --coverage-text --coverage-clover=coverage.xml"
+script: "phpunit --colors --coverage-text --coverage-clover=coverage.clover"
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
