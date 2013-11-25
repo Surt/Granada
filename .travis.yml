@@ -5,4 +5,4 @@ php:
 script: "phpunit --colors --coverage-text --coverage-clover=coverage.xml"
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover coverage.xml
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
