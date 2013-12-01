@@ -40,6 +40,11 @@ class GranadaNewTest extends PHPUnit_Framework_TestCase {
     	$car = Model::factory('Car')->find_one(1);
     	$expected = 'Car1';
         $this->assertEquals($expected, $car->get('name'));
+
+        $car = Model::factory('Car')->find_one(1);
+        $expected = 'test test';
+        $car->existingProperty = 'TEST TeSt';
+        $this->assertEquals($expected, $car->existingProperty);
     }
 
     public function testSetterForProperty(){

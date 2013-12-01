@@ -39,6 +39,10 @@ class Car extends Model {
         return $this->has_many_through('Part');
     }
 
+    public function get_existingProperty($value){
+        return strtolower($value);
+    }
+
     public function get_nonExistentProperty(){
         return "test";
     }
