@@ -207,18 +207,26 @@ ModelName::aname($argument1, $argument2)->....
 ---
 ### Overload GET
 
-Overload of get works only on non defined or empty attributes. You can define functions with the property name if you want to overload it completely.
+Work on defined and non-defined attributes.
 ```php
     // In the Model
-    protected function get_path(){
-        return 'whatever';
+    protected function get_path($value = null){
+        if($value === null) {
+            return 'whatever';
+        }
+        else {
+            return strtolow($value);
+        }
     }
 
     ...
 
     // outside of the model
-    echo $content_instance->path; // returns 'whatever'
+    echo $content_instance->path; // returns 'whatever' if path is not defined 
 ```
+
+Of course, you still can define functions with the property name if you want to overload it completely.
+
 ---
 ### Define resultSet (collection type) class on Model
 
