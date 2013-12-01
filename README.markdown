@@ -215,7 +215,7 @@ Work on defined and non-defined attributes.
             return 'whatever';
         }
         else {
-            return strtolow($value);
+            return strtolower($value);
         }
     }
 
