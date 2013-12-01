@@ -370,7 +370,7 @@ use ArrayAccess;
         public function __get($property) {
             if($result = $this->orm->get($property))
             {
-                return $result;
+                return method_exists($this, $method = 'get_'.$property) ? $this->$method($result) : $result;
             }
             elseif(method_exists($this, $method = 'get_'.$property))
             {
