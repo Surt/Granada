@@ -34,7 +34,7 @@ class GranadaNewTest extends PHPUnit_Framework_TestCase {
 
     public function testGetter(){
     	$car = Model::factory('Car')->find_one(1);
-    	$expected = 'test';
+    	$expected = null;
         $this->assertEquals($expected, $car->nonExistentProperty);
 
     	$car = Model::factory('Car')->find_one(1);
