@@ -363,16 +363,24 @@ use ArrayAccess;
         /**
          * Magic getter method, allows $model->property access to data.
          * Added: check for
-         *      get_{property_name} method defined in model
+         *      get_{property_name} method defined in model and not null
+         *      missing_{property_name} method is null or undefined in model
          *      fetched relationships
-         *      not loaded relationship to fetch it if method exists and "lazy loading" it
+         *      not loaded relationship. "lazy load" if method exists
          */
         public function __get($property) {
-            if($result = $this->orm->get($property))
+            $result = $this->orm->get($property);
+
+            if($result !== null)
             {
-                return method_exists($this, $method = 'get_'.$property) ? $this->$method($result) : $result;
+                if(method_exists($this, $method = 'get_'.$property))
+                {
+                    return $this->$method($result);
+                }
+                else
+                    return $result;
             }
-            elseif(method_exists($this, $method = 'get_'.$property))
+            elseif(method_exists($this, $method = 'missing_'.$property))
             {
                 return $this->$method();
             }
@@ -387,12 +395,13 @@ use ArrayAccess;
                     return $this->relationships[$property] = (in_array($this->relating, array('has_one', 'belongs_to'))) ? $relation->find_one() : $relation->find_many();
                 }
                 else
-                    return false;
+                    return null;
             }
             else {
                 return null;
             }
         }
+
 
         /**
          * Magic setter method, allows $model->property = 'value' access to data.
