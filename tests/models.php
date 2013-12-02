@@ -47,6 +47,10 @@ class Car extends Model {
         return "test";
     }
 
+    public function missing_someProperty(){
+        return 'This property is missing';
+    }
+
     public function set_name($value){
         return 'test';
     }

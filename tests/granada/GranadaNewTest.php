@@ -33,18 +33,23 @@ class GranadaNewTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetter(){
-    	$car = Model::factory('Car')->find_one(1);
-    	$expected = null;
-        $this->assertEquals($expected, $car->nonExistentProperty);
+        $car = Model::factory('Car')->find_one(1);
+        $expected = 'Car1';
+        $this->assertEquals($expected, $car->get('name'), 'Get method test');
+        $this->assertEquals($expected, $car->name, '__get magic method test');
 
     	$car = Model::factory('Car')->find_one(1);
-    	$expected = 'Car1';
-        $this->assertEquals($expected, $car->get('name'));
+    	$expected = null;
+        $this->assertEquals($expected, $car->nonExistentProperty, 'NULL returned if no property found');
 
         $car = Model::factory('Car')->find_one(1);
         $expected = 'test test';
         $car->existingProperty = 'TEST TeSt';
-        $this->assertEquals($expected, $car->existingProperty);
+        $this->assertEquals($expected, $car->existingProperty, 'get_ method overload test');
+
+        $car = Model::factory('Car')->find_one(1);
+        $expected = 'This property is missing';
+        $this->assertEquals($expected, $car->someProperty, 'Missing property fallback test');
     }
 
     public function testSetterForProperty(){
