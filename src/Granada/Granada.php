@@ -415,7 +415,7 @@ use ArrayAccess;
          * Magic isset method, allows isset($model->property) to work correctly.
          */
         public function __isset($property) {
-            return (array_key_exists($property, $this->relationships) || $this->orm->__isset($property) || method_exists($this, $method = 'get_'.$property));
+            return (array_key_exists($property, $this->relationships) || $this->orm->__isset($property) || method_exists($this, $method = 'get_'.$property) || method_exists($this, $method = 'missing_'.$property));
         }
 
         /**
