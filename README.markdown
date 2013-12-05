@@ -205,24 +205,28 @@ ModelName::aname($argument1, $argument2)->....
 ```
 
 ---
-### Overload GET
+### Overload GET and MISSING property
 
-Work on defined and non-defined attributes.
+ 
 ```php
     // In the Model
-    protected function get_path($value = null){
-        if($value === null) {
-            return 'whatever';
-        }
-        else {
-            return strtolower($value);
-        }
+    
+    // Work on defined
+    protected function get_path($value)
+    {
+        return strtolower($value);
     }
 
+    // and non-defined attributes.
+    protected function mising_testing()
+    {
+        return 'whatever';
+    }
     ...
 
     // outside of the model
-    echo $content_instance->path; // returns 'whatever' if path is not defined 
+    echo $content_instance->path; // returns the lowercase path value of $content_instance 
+    echo $content_instance->testing; // returns 'whatever' since we defined a missing_{attribute_name}
 ```
 
 Of course, you still can define functions with the property name if you want to overload it completely.
