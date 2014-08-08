@@ -181,12 +181,11 @@ class Wrapper extends ORM {
      * @return array
      */
     protected function _get_instances($rows){
-        $size = count($rows);
         $instances = array();
-        for ($i = 0; $i < $size; $i++) {
-            $row = $this->_create_instance_from_row($rows[$i]);
+        foreach($rows as $current_key => $current_row) {
+            $row = $this->_create_instance_from_row($current_row);
             $row = $this->_create_model_instance($row);
-            $key = (isset($row->{$this->_instance_id_column}) && $this->_associative_results) ? $row->id() : $i;
+            $key = (isset($row->{$this->_instance_id_column}) && $this->_associative_results) ? $row->id() : $current_key;
             $instances[$key] = $row;
         }
 
