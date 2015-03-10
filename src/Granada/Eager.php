@@ -18,6 +18,7 @@
          *
          * Attempts to execute any relationship defined for eager loading
          *
+         * @param Orm\Wrapper $orm
          */
         public static function hydrate($orm, &$results, $return_result_set = false)
         {
@@ -132,7 +133,6 @@
          *
          * @param  object  $relationship
          * @param  array   $parents
-         * @param  string  $relating_key
          * @param  string  $relating
          * @param  string  $include
          * @return void
@@ -176,7 +176,6 @@
          *
          * @param  object  $relationship
          * @param  array   $parents
-         * @param  string  $relating_key
          * @param  string  $relating
          * @param  string  $include
          * @return void

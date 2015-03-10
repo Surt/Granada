@@ -1,6 +1,9 @@
 <?php namespace Granada;
 
-use ArrayAccess, Countable, IteratorAggregate, ArrayIterator;
+use ArrayAccess;
+use Countable;
+use IteratorAggregate;
+use ArrayIterator;
 
 /**
  * A result set class for working with collections of model instances
@@ -47,7 +50,7 @@ class ResultSet implements ArrayAccess, Countable, IteratorAggregate {
 
     /**
      * Get the current result set as an array
-     * @return array
+     * @return string
      */
     public function as_json() {
         $result = array();
@@ -67,7 +70,7 @@ class ResultSet implements ArrayAccess, Countable, IteratorAggregate {
 
     /**
      * Merge the resultSet with an array
-     * @return array
+     * @return ResultSet
      */
     public function merge(IdiormResultSet $result) {
         array_push($this->_results, $this->_results);
@@ -92,7 +95,7 @@ class ResultSet implements ArrayAccess, Countable, IteratorAggregate {
 
     /**
      * Push an element on the result set
-     * @return Model
+     * @return ResultSet
      */
     public function add($value){
         array_push($this->_results, $value);
@@ -172,7 +175,7 @@ class ResultSet implements ArrayAccess, Countable, IteratorAggregate {
      * @example ORM::for_table('Widget')->find_many()->set('field', 'value')->save();
      * @param string $method
      * @param array $params
-     * @return \IdiormResultSet
+     * @return ResultSet
      */
     public function __call($method, $params = array()) {
         foreach($this->_results as $model) {

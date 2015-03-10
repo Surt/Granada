@@ -1,6 +1,5 @@
 <?php
 
-use Granada\Orm;
 use Granada\Model;
 
 /**

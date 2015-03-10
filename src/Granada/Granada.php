@@ -120,6 +120,7 @@ use ArrayAccess;
          * Retrieve the value of a static property on a class. If the
          * class or the property does not exist, returns the default
          * value supplied as the third argument (which defaults to null).
+         * @param string $property
          */
         protected static function _get_static_property($class_name, $property, $default=null) {
             if (!class_exists($class_name) || !property_exists($class_name, $property)) {
@@ -135,6 +136,7 @@ use ArrayAccess;
          * named $_table, the value of this property will be
          * returned. If not, the class name will be converted using
          * the _class_name_to_table_name method method.
+         * @param string $class_name
          */
         protected static function _get_table_name($class_name) {
             $specified_table_name = self::_get_static_property($class_name, '_table');
@@ -166,6 +168,7 @@ use ArrayAccess;
         /**
          * Return the ID column name to use for this class. If it is
          * not set on the class, returns null.
+         * @param string $class_name
          */
         protected static function _get_id_column_name($class_name) {
             return self::_get_static_property($class_name, '_id_column', self::DEFAULT_ID_COLUMN);
@@ -243,6 +246,8 @@ use ArrayAccess;
         /**
          * Helper method to manage one-to-one relations where the foreign
          * key is on the associated table.
+         * @param string $associated_class_name
+         * @param string $foreign_key_name
          */
         protected function has_one($associated_class_name, $foreign_key_name=null, $foreign_key_name_in_current_models_table=null, $connection_name=null) {
             // Added: to determine eager load relationship parameters
@@ -253,6 +258,8 @@ use ArrayAccess;
         /**
          * Helper method to manage one-to-many relations where the foreign
          * key is on the associated table.
+         * @param string $associated_class_name
+         * @param string $foreign_key_name
          */
         protected function has_many($associated_class_name, $foreign_key_name=null, $foreign_key_name_in_current_models_table=null, $connection_name=null) {
             // Added: to determine eager load relationship parameters
@@ -263,6 +270,8 @@ use ArrayAccess;
         /**
          * Helper method to manage one-to-one and one-to-many relations where
          * the foreign key is on the base table.
+         * @param string $associated_class_name
+         * @param string $foreign_key_name
          */
         protected function belongs_to($associated_class_name, $foreign_key_name=null, $foreign_key_name_in_associated_models_table=null, $connection_name=null) {
             // Added: to determine eager load relationship parameters
@@ -293,6 +302,10 @@ use ArrayAccess;
         /**
          * Helper method to manage many-to-many relationships via an intermediate model. See
          * README for a full explanation of the parameters.
+         * @param string $associated_class_name
+         * @param string $join_class_name
+         * @param string $key_to_base_table
+         * @param string $key_to_associated_table
          */
         protected function has_many_through($associated_class_name, $join_class_name=null, $key_to_base_table=null, $key_to_associated_table=null,  $key_in_base_table=null, $key_in_associated_table=null, $connection_name=null) {
             // Added: to determine eager load relationship parameters
@@ -427,7 +440,6 @@ use ArrayAccess;
 
         /**
          * Setter method, allows $model->set('property', 'value') access to data.
-         * @param string|array $key
          * @param string|null $value
          */
         public function set($property, $value = null) {
@@ -449,7 +461,6 @@ use ArrayAccess;
 
         /**
          * Setter method, allows $model->set_expr('property', 'value') access to data.
-         * @param string|array $key
          * @param string|null $value
          */
         public function set_expr($property, $value = null) {
