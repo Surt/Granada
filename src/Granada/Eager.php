@@ -18,6 +18,7 @@
          *
          * Attempts to execute any relationship defined for eager loading
          *
+         * @param Orm\Wrapper $orm
          */
         public static function hydrate($orm, &$results, $return_result_set = false)
         {
@@ -94,10 +95,9 @@
         /**
          * Eagerly load a relationship.
          *
-         * @param  object  $orm
-         * @param  object  $result set
          * @param  array   $parents
          * @param  string  $include
+         * @param boolean $return_result_set
          * @return void
          */
         private static function eagerly($model, &$parents, $include, $return_result_set)
@@ -132,7 +132,6 @@
          *
          * @param  object  $relationship
          * @param  array   $parents
-         * @param  string  $relating_key
          * @param  string  $relating
          * @param  string  $include
          * @return void
@@ -176,7 +175,6 @@
          *
          * @param  object  $relationship
          * @param  array   $parents
-         * @param  string  $relating_key
          * @param  string  $relating
          * @param  string  $include
          * @return void
