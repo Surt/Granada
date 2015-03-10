@@ -26,6 +26,7 @@ class Wrapper extends ORM {
     /**
      * Set the name of the class which the wrapped
      * methods should return instances of.
+     * @param string $class_name
      */
     public function set_class_name($class_name) {
         $this->_class_name = $class_name;
@@ -144,6 +145,7 @@ class Wrapper extends ORM {
      * an instance of the class associated with
      * this wrapper instead of the raw ORM class.
      * Added: hidrate the model instance before returning
+     * @param integer $id
      */
     public function find_one($id=null) {
         $result = $this->_create_model_instance(parent::find_one($id));
@@ -224,7 +226,7 @@ class Wrapper extends ORM {
     /**
      * Added: Set the eagerly loaded models on the queryable model.
      *
-     * @return Model
+     * @return Wrapper
      */
     public function with()
     {
@@ -235,7 +237,7 @@ class Wrapper extends ORM {
     /**
      * Added: Reset relation deletes the relationship "where" condition.
      *
-     * @return Model
+     * @return Wrapper
      */
     public function reset_relation()
     {
@@ -261,6 +263,8 @@ class Wrapper extends ORM {
      * @param   array   the array to convert
      * @param   string  the field name of the key field
      * @param   string  the field name of the value field
+     * @param boolean|string $key_field
+     * @param boolean|string $val_field
      * @return  array
      */
     public static function assoc_to_keyval($assoc = null, $key_field = null, $val_field = null)
