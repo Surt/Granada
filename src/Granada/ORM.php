@@ -1236,6 +1236,9 @@ class ORM implements ArrayAccess {
      * Add a WHERE ... IN clause to your query
      */
     public function where_in($column_name, $values) {
+        if (!$values) {
+            return $this->_add_where("0", $values);
+        }
         $column_name = $this->_quote_identifier($column_name);
         $placeholders = $this->_create_placeholders($values);
         return $this->_add_where("{$column_name} IN ({$placeholders})", $values);
@@ -1247,9 +1250,11 @@ class ORM implements ArrayAccess {
      * @param string[] $values
      */
     public function where_not_in($column_name, $values) {
-        $column_name = $this->_quote_identifier($column_name);
-        $placeholders = $this->_create_placeholders($values);
-        return $this->_add_where("{$column_name} NOT IN ({$placeholders})", $values);
+        if ($values) {
+            $column_name = $this->_quote_identifier($column_name);
+            $placeholders = $this->_create_placeholders($values);
+            return $this->_add_where("{$column_name} NOT IN ({$placeholders})", $values);
+        }
     }
 
     /**
