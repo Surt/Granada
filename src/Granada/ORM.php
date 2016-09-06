@@ -1255,6 +1255,7 @@ class ORM implements ArrayAccess {
             $placeholders = $this->_create_placeholders($values);
             return $this->_add_where("{$column_name} NOT IN ({$placeholders})", $values);
         }
+        return $this;
     }
 
     /**

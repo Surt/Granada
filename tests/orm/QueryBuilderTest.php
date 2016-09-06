@@ -78,9 +78,21 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, ORM::get_last_query());
     }
 
+    public function testWhereInNoItems() {
+        ORM::for_table('widget')->where_in('name', array())->find_many();
+        $expected = "SELECT * FROM `widget` WHERE 0";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
     public function testWhereNotIn() {
         ORM::for_table('widget')->where_not_in('name', array('Fred', 'Joe'))->find_many();
         $expected = "SELECT * FROM `widget` WHERE `name` NOT IN ('Fred', 'Joe')";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
+    public function testWhereNotInNoItems() {
+        ORM::for_table('widget')->where_not_in('name', array())->find_many();
+        $expected = "SELECT * FROM `widget`";
         $this->assertEquals($expected, ORM::get_last_query());
     }
 
