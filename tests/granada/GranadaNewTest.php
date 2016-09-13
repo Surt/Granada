@@ -60,6 +60,25 @@ class GranadaNewTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $car->name);
     }
 
+    public function testNewItemNoID(){
+    	$car = Model::factory('Car')->create(array(
+            'name' => 'New Car',
+        ));
+        $car->save();
+    	$expected = 5;
+        $this->assertEquals($expected, $car->id);
+    }
+
+    public function testNewItemBlankID(){
+    	$car = Model::factory('Car')->create(array(
+            'id' => '',
+            'name' => 'New Car',
+        ));
+        $car->save();
+    	$expected = 9;
+        $this->assertEquals($expected, $car->id);
+    }
+
     public function testSetterForRelationship(){
     	$car = Model::factory('Car')->with('manufactor')->find_one(1);
     	$expected = 'Manufactor1';

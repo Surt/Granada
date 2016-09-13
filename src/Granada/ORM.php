@@ -1919,7 +1919,7 @@ class ORM implements ArrayAccess {
         // If we've just inserted a new record, set the ID of this object
         if ($this->_is_new) {
             $this->_is_new = false;
-            if (is_null($this->id())) {
+            if (!($this->id())) {
                 if(self::$_db[$this->_connection_name]->getAttribute(PDO::ATTR_DRIVER_NAME) == 'pgsql') {
                     $this->_data[$this->_get_id_column_name()] = self::get_last_statement()->fetchColumn();
                 } else {
