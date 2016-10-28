@@ -48,6 +48,42 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, ORM::get_last_query());
     }
 
+    public function testSingleWhereClauseEqEmpty() {
+        ORM::for_table('widget')->where('name', '')->find_one();
+        $expected = "SELECT * FROM `widget` WHERE `name` = '' LIMIT 1";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
+    public function testSingleWhereClauseEqNULL() {
+        ORM::for_table('widget')->where('name', NULL)->find_one();
+        $expected = "SELECT * FROM `widget` WHERE `name` IS NULL LIMIT 1";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
+    public function testSingleWhereEqualsClauseEqNULL() {
+        ORM::for_table('widget')->where_equal('name', NULL)->find_one();
+        $expected = "SELECT * FROM `widget` WHERE `name` IS NULL LIMIT 1";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
+    public function testSingleWhereNotEqNULL() {
+        ORM::for_table('widget')->where_not_equal('name', NULL)->find_one();
+        $expected = "SELECT * FROM `widget` WHERE `name` IS NOT NULL LIMIT 1";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
+    public function testMultipleWhereNULLClauses() {
+        ORM::for_table('widget')->where('name', NULL)->where('age', NULL)->find_one();
+        $expected = "SELECT * FROM `widget` WHERE `name` IS NULL AND `age` IS NULL LIMIT 1";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
+    public function testMultipleWhereClausesOneNULL() {
+        ORM::for_table('widget')->where('name', 'Fred')->where('age', NULL)->find_one();
+        $expected = "SELECT * FROM `widget` WHERE `name` = 'Fred' AND `age` IS NULL LIMIT 1";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
     public function testMultipleWhereClauses() {
         ORM::for_table('widget')->where('name', 'Fred')->where('age', 10)->find_one();
         $expected = "SELECT * FROM `widget` WHERE `name` = 'Fred' AND `age` = '10' LIMIT 1";
