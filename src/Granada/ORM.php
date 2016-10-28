@@ -1151,6 +1151,9 @@ class ORM implements ArrayAccess {
      * is built.
      */
     public function where($column_name, $value) {
+		if (is_null($value)) {
+			return $this->where_null($column_name);
+		}
         return $this->where_equal($column_name, $value);
     }
 
@@ -1159,6 +1162,9 @@ class ORM implements ArrayAccess {
      * Can be used if preferred.
      */
     public function where_equal($column_name, $value) {
+		if (is_null($value)) {
+			return $this->where_null($column_name);
+		}
         return $this->_add_simple_where($column_name, '=', $value);
     }
 
@@ -1168,6 +1174,9 @@ class ORM implements ArrayAccess {
      * @param string $value
      */
     public function where_not_equal($column_name, $value) {
+		if (is_null($value)) {
+			return $this->where_not_null($column_name);
+		}
         return $this->_add_simple_where($column_name, '!=', $value);
     }
 
