@@ -1151,6 +1151,9 @@ class ORM implements ArrayAccess {
      * is built.
      */
     public function where($column_name, $value) {
+		if (is_null($value)) {
+			return $this->where_null($column_name);
+		}
         return $this->where_equal($column_name, $value);
     }
 
@@ -1159,6 +1162,9 @@ class ORM implements ArrayAccess {
      * Can be used if preferred.
      */
     public function where_equal($column_name, $value) {
+		if (is_null($value)) {
+			return $this->where_null($column_name);
+		}
         return $this->_add_simple_where($column_name, '=', $value);
     }
 
@@ -1168,6 +1174,9 @@ class ORM implements ArrayAccess {
      * @param string $value
      */
     public function where_not_equal($column_name, $value) {
+		if (is_null($value)) {
+			return $this->where_not_null($column_name);
+		}
         return $this->_add_simple_where($column_name, '!=', $value);
     }
 
@@ -1919,7 +1928,7 @@ class ORM implements ArrayAccess {
         // If we've just inserted a new record, set the ID of this object
         if ($this->_is_new) {
             $this->_is_new = false;
-            if (is_null($this->id())) {
+            if (!($this->id())) {
                 if(self::$_db[$this->_connection_name]->getAttribute(PDO::ATTR_DRIVER_NAME) == 'pgsql') {
                     $this->_data[$this->_get_id_column_name()] = self::get_last_statement()->fetchColumn();
                 } else {
