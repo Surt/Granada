@@ -510,6 +510,13 @@ use ArrayAccess;
         }
 
         /**
+         * Get the list of fields that need updating on next save
+         */
+        public function list_dirty_fields() {
+            return $this->orm->list_dirty_fields();
+        }
+
+        /**
          * Check whether the model was the result of a call to create() or not
          * @return bool
          */
