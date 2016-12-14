@@ -466,7 +466,7 @@ class ORM implements ArrayAccess {
 
             // Replace placeholders in the query for vsprintf
             if(false !== strpos($query, "'") || false !== strpos($query, '"')) {
-                $query = Orm\String::str_replace_outside_quotes("?", "%s", $query);
+                $query = Orm\Str::str_replace_outside_quotes("?", "%s", $query);
             } else {
                 $query = str_replace("?", "%s", $query);
             }
