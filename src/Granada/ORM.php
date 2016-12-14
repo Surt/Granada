@@ -1216,8 +1216,14 @@ class ORM implements ArrayAccess {
                     $query[] = "AND";
                 }
                 $query[] = $this->_quote_identifier($key);
-                $data[] = $item;
-                $query[] = $op . " ?";
+                if (is_null($item) && ($op == '=')) {
+                    $query[] = 'IS NULL';
+                } else if (is_null($item) && ($op == '!=')) {
+                    $query[] = 'IS NOT NULL';
+                } else {
+                    $query[] = $op . " ?";
+                    $data[] = $item;
+                }
             }
         }
         $query[] = "))";

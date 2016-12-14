@@ -156,6 +156,22 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, ORM::get_last_query());
     }
     
+    public function testWhereAnyIsNULLs() {
+        ORM::for_table('widget')->where_any_is(array(
+            array('name' => 'Joe', 'age' => NULL),
+            array('name' => NULL, 'age' => 20)))->find_many();
+        $expected = "SELECT * FROM `widget` WHERE (( `name` = 'Joe' AND `age` IS NULL ) OR ( `name` IS NULL AND `age` = '20' ))";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
+    public function testWhereAnyIsNOTNULLs() {
+        ORM::for_table('widget')->where_any_is(array(
+            array('name' => 'Joe', 'age' => NULL),
+            array('name' => NULL, 'age' => 20)), '!=')->find_many();
+        $expected = "SELECT * FROM `widget` WHERE (( `name` != 'Joe' AND `age` IS NOT NULL ) OR ( `name` IS NOT NULL AND `age` != '20' ))";
+        $this->assertEquals($expected, ORM::get_last_query());
+    }
+
     public function testLimit() {
         ORM::for_table('widget')->limit(5)->find_many();
         $expected = "SELECT * FROM `widget` LIMIT 5";
