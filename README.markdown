@@ -32,7 +32,7 @@ $user->first_name = 'Doe';
 $user->save();
 
 // select relationship
-$posts_list = $user->posts()->find_many();
+$posts = $user->posts()->find_many();
 foreach ($posts as $post) {
     echo $post->content;
 }
