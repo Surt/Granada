@@ -1289,7 +1289,7 @@ class ORM implements ArrayAccess {
      */
     public function where_in($column_name, $values) {
         if (!$values) {
-            return $this->_add_where("0", $values);
+            return $this->_add_where("0");
         }
         $column_name = $this->_quote_identifier($column_name);
         $placeholders = $this->_create_placeholders($values);
@@ -1572,6 +1572,14 @@ class ORM implements ArrayAccess {
             $this->_build_limit(),
             $this->_build_offset(),
         ));
+    }
+
+    /**
+     * Used to perform unit tests
+     * Note must call _build_select_start() for this to be populated
+     */
+    public function testValues() {
+        return $this->_values;
     }
 
     /**
