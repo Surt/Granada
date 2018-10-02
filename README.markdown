@@ -5,6 +5,12 @@ Granada
 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Surt/granada/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
+Notice: This package is deprecated in favor of
+
+https://packagist.org/packages/granadaorm/granada
+
+https://github.com/GranadaORM/Granada
+
 Granada is a easy to use Active Record implementation, and ORM based on Idiorm/Paris.
 
 A quick view:
