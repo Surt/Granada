@@ -3,7 +3,6 @@ Granada
 
 [![Latest Stable Version](https://poser.pugx.org/surt/granada/v/stable.png)](https://packagist.org/packages/surt/granada)
 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Surt/granada/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Notice: This package is deprecated in favor of
 
