@@ -3,14 +3,17 @@ Granada
 
 [![Latest Stable Version](https://poser.pugx.org/surt/granada/v/stable.png)](https://packagist.org/packages/surt/granada)
 [![Build Status](https://travis-ci.org/Surt/Granada.png?branch=develop)](https://travis-ci.org/Surt/Granada)
+[![deprecated](http://badges.github.io/stability-badges/dist/deprecated.svg)](http://github.com/badges/stability-badges)
 
-Notice: This package is deprecated in favor of
-
+[DEPRECATED]
+This package is deprecated in favor of https://github.com/GranadaORM/Granada
 https://packagist.org/packages/granadaorm/granada
 
-https://github.com/GranadaORM/Granada
 
-Granada is a easy to use Active Record implementation, and ORM based on Idiorm/Paris.
+Description
+------------
+
+Granada is a easy to use Active Record implementation based on Idiorm/Paris with eager loading, lazy loading, query filters, mutators, etc.
 
 A quick view:
 ------------
